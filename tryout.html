@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Heritage Mixer – Tree Version</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      body {
+        background-image: url("backgrounds/general.png");
+        color: #4e3c32;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      #game {
+        position: fixed; /* fills screen, stays fixed */
+        inset: 0; /* top:0, right:0, bottom:0, left:0 */
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #fdf4e7;
+        border-radius: 0; /* no rounded corners for fullscreen */
+        overflow: hidden;
+      }
+
+      header {
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(141, 108, 88, 0.2);
+        background: rgba(253, 244, 231, 0.95);
+      }
+
+      header h1 {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+        color: #4e3c32;
+      }
+
+      header p {
+        font-size: 0.9rem;
+        color: #806658;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 14px 20px 8px;
+      }
+
+      #level-info {
+        margin-bottom: 10px;
+      }
+
+      #level-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: #4e3c32;
+      }
+
+      #level-subtitle {
+        font-size: 0.9rem;
+        color: #806658;
+      }
+
+      /* GAME BOARD */
+
+      #board {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px 14px;
+        min-height: 0; /* important so it doesn't overflow inside #game */
+      }
+
+      /* LEFT PANEL – ELEMENTS */
+
+      #elements-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        background-color: #f1cdb6;
+        border-radius: 8px;
+        width: 140px; /* IMPORTANT: give it enough width */
+        min-width: 120px;
+        max-width: 160px;
+
+        overflow-y: auto;
+      }
+
+      #elements-panel.dragover {
+        outline: 2px dashed rgba(0, 0, 0, 0.3);
+      }
+
+      /* Base draggable */
+      .draggable {
+        transition: transform 0.2s ease, padding 0.2s ease;
+      }
+
+      /* SMALL when in the elements panel */
+      .draggable.in-panel {
+        transform: scale(0.8);
+        transform-origin: top left;
+        padding: 2px;
+        width: fit-content;
+        height: fit-content;
+        margin: 0 auto;
+      }
+
+      /* Image size in panel */
+      .draggable.in-panel img {
+        max-width: 100%;
+        height: auto;
+        pointer-events: none; /* important so the box handles dragging */
+      }
+
+      /* BIG when on the tree / dropzones */
+      .draggable.on-board {
+        transform: scale(1);
+        transform-origin: center;
+        padding: 4px;
+        background: transparent;
+        border: 0;
+      }
+
+      /* Image size on board */
+      .draggable.on-board img {
+        max-width: 90px; /* adjust as you like */
+        height: auto;
+        pointer-events: none;
+      }
+
+      #elements-panel-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #a67f6a;
+      }
+
+      #elements-panel-subtitle {
+        font-size: 0.82rem;
+        color: #8b6a59;
+      }
+
+      #draggables-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        gap: 6px;
+        width: 100%;
+      }
+
+      .draggable img {
+        padding: 4px;
+        pointer-events: none;
+      }
+
+      .draggable {
+        padding: 8px 10px;
+        cursor: grab;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        transition: transform 0.1s ease, box-shadow 0.1s ease, border 0.1s ease;
+      }
+
+      .draggable:active {
+        cursor: grabbing;
+        transform: scale(0.97);
+        box-shadow: 0 2px 6px rgba(100, 70, 50, 0.24);
+      }
+
+      .draggable-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: #f0dcc9;
+        color: #7a5d4e;
+      }
+
+      /* RIGHT PANEL – TREE */
+
+      #tree-panel {
+        position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(141, 108, 88, 0.25);
+
+        aspect-ratio: 3 / 2; /* matches 1536x1024 exactly */
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: contain; /* never crop the shelf */
+        background-color: #000; /* shown behind the letterbox */
+
+        max-width: 900px;
+        max-height: 600px;
+        margin: 0 auto;
+      }
+
+      #tree-fade {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top,
+          transparent 0%,
+          transparent 50%,
+          rgba(243, 214, 194, 0.6) 100%
+        );
+        pointer-events: none;
+      }
+
+      #tree-hint {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.84rem;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(253, 247, 238, 0.85);
+        color: #7a5d4e;
+        border: 1px solid rgba(141, 108, 88, 0.25);
+      }
+
+      /* Dropzones row on the floor under the tree */
+
+      /* This now becomes a full overlay layer inside #tree-panel */
+      #dropzones-list {
+        position: absolute;
+        inset: 0; /* fill the tree-panel */
+        pointer-events: none; /* zones themselves will re-enable events */
+      }
+
+      /* Dropzones are individually placed with JS */
+      .dropzone {
+        position: absolute;
+        pointer-events: auto;
+        min-width: 70px;
+        height: 42px;
+        padding: 4px;
+        border-radius: 999px;
+        border: 2px dashed rgba(110, 86, 68, 0.4);
+        background: rgba(253, 247, 238, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+        transition: border-color 0.15s ease, background 0.15s ease,
+          transform 0.1s ease, box-shadow 0.1s ease;
+      }
+
+      .dropzone.dropping {
+        border-style: solid;
+        border-color: #6e5644;
+        background: rgba(255, 251, 243, 0.96);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 7px rgba(100, 70, 50, 0.3);
+      }
+
+      .dropzone-header-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #6b5343;
+      }
+
+      .dropzone-heritage-tag {
+        font-size: 0.65rem;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: rgba(230, 201, 177, 0.8);
+        color: #5c4337;
+      }
+
+      .dropzone-hint {
+        display: none; /* hidden to keep it minimal; you can show it if you want */
+        font-size: 0.7rem;
+      }
+
+      .dropzone .draggable {
+        width: 100%;
+        margin-top: 2px;
+        font-size: 0.78rem;
+      }
+
+      /* CONTROLS + FOOTER */
+
+      #controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: #876758;
+      }
+
+      #next-level-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: #607e6f;
+        color: #fdf7ee;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(32, 62, 51, 0.25);
+        transition: background 0.1s ease, transform 0.1s ease,
+          box-shadow 0.1s ease;
+      }
+
+      #next-level-btn:disabled {
+        cursor: not-allowed;
+        background: #c1b0a6;
+        box-shadow: none;
+        transform: none;
+      }
+
+      #next-level-btn:not(:disabled):hover {
+        background: #4a6557;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(32, 62, 51, 0.3);
+      }
+
+      #next-level-btn span.arrow {
+        font-size: 1rem;
+      }
+
+      footer {
+        padding: 10px 20px 16px;
+        border-top: 1px solid rgba(141, 108, 88, 0.25);
+        background: rgba(253, 244, 231, 0.98);
+      }
+
+      #heritage-footer-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      #heritage-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 0.85rem;
+        color: #6b5343;
+      }
+
+      #heritage-bar-wrapper {
+        width: 100%;
+        height: 16px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #f0dcc9;
+        border: 1px solid rgba(141, 108, 88, 0.4);
+      }
+
+      #heritage-bar {
+        display: flex;
+        width: 100%;
+        height: 100%;
+      }
+
+      .heritage-segment {
+        height: 100%;
+        transition: width 0.25s ease;
+      }
+
+      #heritage-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 4px;
+        font-size: 0.8rem;
+        color: #6b5343;
+      }
+
+      .heritage-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .heritage-color-box {
+        width: 11px;
+        height: 11px;
+        border-radius: 3px;
+        border: 1px solid rgba(0, 0, 0, 0.25);
+      }
+
+      .heritage-percent {
+        opacity: 0.85;
+      }
+
+      #final-summary {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #6b5343;
+      }
+
+      #restart-btn {
+        margin-top: 10px;
+        border-radius: 999px;
+        border: 1px solid #607e6f;
+        background: #fdf7ee;
+        color: #4a6557;
+        font-size: 0.85rem;
+        padding: 7px 14px;
+        cursor: pointer;
+      }
+
+      #restart-btn:hover {
+        background: #f4e7d7;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        #board {
+          grid-template-columns: 1fr;
+        }
+        #tree-panel {
+          min-height: 340px;
+        }
+        #controls {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        #next-level-btn {
+          align-self: stretch;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game">
+      <main>
+        <section id="level-info">
+          <div id="level-title"></div>
+          <div id="level-subtitle"></div>
+        </section>
+
+        <section id="board">
+          <!-- LEFT: draggable elements -->
+          <div id="elements-panel">
+            <div id="elements-panel-title">Memories to place</div>
+            <div id="elements-panel-subtitle">
+              Drag them under the tree where they feel at home.
+            </div>
+            <div class="draggables" id="draggables-list"></div>
+          </div>
+
+          <!-- RIGHT: tree background with dropzones on the floor -->
+          <div id="tree-panel">
+            <div id="tree-hint">Drop here, under the tree</div>
+            <div id="tree-fade"></div>
+            <div class="dropzones" id="dropzones-list"></div>
+          </div>
+        </section>
+
+        <section id="controls">
+          <div id="progress-text"></div>
+          <button id="next-level-btn" disabled>
+            Lock in &amp; go on
+            <span class="arrow">→</span>
+          </button>
+        </section>
+
+        <section id="final-summary" style="display: none"></section>
+      </main>
+
+      <footer>
+        <div id="heritage-footer-inner">
+          <div id="heritage-label-row">
+            <span>Your heritage mix so far</span>
+            <span id="heritage-total-label" style="font-size: 0.8rem"></span>
+          </div>
+          <div id="heritage-bar-wrapper">
+            <div id="heritage-bar"></div>
+          </div>
+          <div id="heritage-legend"></div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Heritage definitions
+      const HERITAGES = [
+        { key: "hungarian", label: "Hungarian", color: "#b75b4b" }, // warm red
+        { key: "szekely", label: "Székely", color: "#496c8e" }, // muted blue
+        { key: "italian", label: "Italian", color: "#587f57" }, // muted green
+        { key: "russian", label: "Russian", color: "#7a5a96" }, // muted purple
+        { key: "svab", label: "Sváb", color: "#e2a543" }, // warm yellow
+      ];
+
+      // Start with 100 points Hungarian, others 0
+      let heritagePoints = {
+        hungarian: 100,
+        szekely: 0,
+        italian: 0,
+        russian: 0,
+        svab: 0,
+      };
+
+      // 11 levels configuration (same logic as before)
+      const LEVELS = [
+        {
+          id: 1,
+          title: "Level 1 · VHS on shelf",
+          subtitle: "Put them in order",
+          backgroundImage: "backgrounds/shelf.png",
+          maxPerDropzone: 1,
+          elements: [
+            {
+              id: "e1",
+              image: "assets/vhs-no.png",
+              heritage: "russian",
+            },
+            { id: "e2", image: "assets/vhs-lion.png", heritage: "global" },
+            { id: "e3", image: "assets/vhs-szaffi.png", heritage: "hungarian" },
+            { id: "e4", image: "assets/vhs-winnie.png", heritage: "global" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              position: { x: 10, y: 40 }, // under left side of tree
+              size: { width: 60, height: 200 },
+            },
+            {
+              id: "dz2",
+              position: { x: 15, y: 40 },
+              size: { width: 60, height: 200 }, // center
+            },
+            {
+              id: "dz3",
+              position: { x: 20, y: 40 },
+              size: { width: 60, height: 200 }, // right
+            },
+            {
+              id: "dz3",
+              position: { x: 25, y: 40 },
+              size: { width: 60, height: 200 }, // right
+            },
+          ],
+        },
+        {
+          id: 2,
+          title: "Level 2 · Weekend escape",
+          subtitle: "Place each plan where it feels most natural.",
+          backgroundImage: "backgrounds/bar.png",
+          type: "froccs",
+          maxPerDropzone: 1,
+          elements: [
+            { id: "wineBottle", image: "assets/wine_bottle.png" },
+            { id: "measurer", image: "assets/measurer_empty.png" },
+            { id: "glass", image: "assets/glass_empty.png" },
+            { id: "soda", label: "assets/sodabottle.png" },
+          ],
+          dropzones: [
+            [
+              {
+                id: "dzBottle",
+                heritage: "hungarian",
+                position: { x: 20, y: 70 },
+              },
+              {
+                id: "dzMeasurer",
+                heritage: "hungarian",
+                position: { x: 50, y: 70 },
+              },
+              {
+                id: "dzGlass",
+                heritage: "hungarian",
+                position: { x: 80, y: 70 },
+              },
+            ],
+          ],
+        },
+        {
+          id: 3,
+          title: "Level 3 · Grandma’s stories",
+          subtitle: "Each story fragment resonates with someone.",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Moving across borders" },
+            { id: "e2", label: "Life in a small village" },
+            { id: "e3", label: "Working the land by hand" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian tales",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Székely legends",
+              heritage: "szekely",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Russian memories",
+              heritage: "russian",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 4,
+          title: "Level 4 · Playlist of your life",
+          subtitle: "Where would you shelve these songs?",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Loud wedding folk music" },
+            { id: "e2", label: "Accordion on the street" },
+            { id: "e3", label: "Melancholic ballads" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian folk",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Italian street",
+              heritage: "italian",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Russian melancholia",
+              heritage: "russian",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 5,
+          title: "Level 5 · Home decoration",
+          subtitle: "Imagine whose house your choices decorate.",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Hand-painted wooden furniture" },
+            { id: "e2", label: "Embroidered tablecloth" },
+            { id: "e3", label: "Rows of framed family photos" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian flat",
+              heritage: "hungarian",
+              hint: "",
+            },
+            { id: "dz2", label: "Sváb house", heritage: "svab", hint: "" },
+            { id: "dz3", label: "Italian home", heritage: "italian", hint: "" },
+          ],
+        },
+        {
+          id: 6,
+          title: "Level 6 · School days",
+          subtitle: "Put these memories where they fit emotionally.",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Strict but kind teacher" },
+            { id: "e2", label: "Long winter walks to school" },
+            { id: "e3", label: "After-class gossip in the corridor" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian school",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Russian discipline",
+              heritage: "russian",
+              hint: "",
+            },
+            { id: "dz3", label: "Sváb community", heritage: "svab", hint: "" },
+          ],
+        },
+        {
+          id: 7,
+          title: "Level 7 · Holidays",
+          subtitle: "Sort the holiday scenes by their hidden origin.",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Carving patterns into Easter eggs" },
+            { id: "e2", label: "Huge Christmas family lunch" },
+            { id: "e3", label: "Bonfires and folk dancing" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian traditions",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Székely rituals",
+              heritage: "szekely",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Italian celebrations",
+              heritage: "italian",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 8,
+          title: "Level 8 · Neighborhood vibes",
+          subtitle: "Which kind of street are you walking on?",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Small bakery on the corner" },
+            { id: "e2", label: "Old people chatting on benches" },
+            { id: "e3", label: "Kids riding bikes on the street" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian town",
+              heritage: "hungarian",
+              hint: "",
+            },
+            { id: "dz2", label: "Sváb village", heritage: "svab", hint: "" },
+            {
+              id: "dz3",
+              label: "Székely village",
+              heritage: "szekely",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 9,
+          title: "Level 9 · Food market",
+          subtitle: "These smells and tastes belong somewhere.",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Smell of fresh bread" },
+            { id: "e2", label: "Pickles in big jars" },
+            { id: "e3", label: "Fresh fish on ice" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian market",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Italian mercato",
+              heritage: "italian",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Russian winter market",
+              heritage: "russian",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 10,
+          title: "Level 10 · Language mix",
+          subtitle: "Where do these phrases feel at home?",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Lots of diminutives and nicknames" },
+            { id: "e2", label: "Rolling r’s and strong consonants" },
+            { id: "e3", label: "Hands moving while speaking" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian chatter",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Székely accent",
+              heritage: "szekely",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Italian gestures",
+              heritage: "italian",
+              hint: "",
+            },
+            {
+              id: "dz4",
+              label: "Russian rhythm",
+              heritage: "russian",
+              hint: "",
+            },
+          ],
+        },
+        {
+          id: 11,
+          title: "Level 11 · Future home",
+          subtitle: "If life teleports you – where do these dreams land?",
+          backgroundImage: "backgrounds/bar.png",
+          elements: [
+            { id: "e1", label: "Living next to family" },
+            { id: "e2", label: "Small café where everyone knows you" },
+            { id: "e3", label: "Quiet village with mountains" },
+            { id: "e4", label: "International city with many languages" },
+          ],
+          dropzones: [
+            {
+              id: "dz1",
+              label: "Hungarian future",
+              heritage: "hungarian",
+              hint: "",
+            },
+            {
+              id: "dz2",
+              label: "Székely mountains",
+              heritage: "szekely",
+              hint: "",
+            },
+            {
+              id: "dz3",
+              label: "Italian seaside",
+              heritage: "italian",
+              hint: "",
+            },
+            {
+              id: "dz4",
+              label: "Russian plains",
+              heritage: "russian",
+              hint: "",
+            },
+            { id: "dz5", label: "Sváb village", heritage: "svab", hint: "" },
+          ],
+        },
+      ];
+
+      let currentLevelIndex = 0;
+      let currentPlacements = {}; // elementId -> dropzoneId
+      let dropzoneContents = {}; // { dropzoneId: elementId }
+      let froccsState = {
+        setupComplete: false,
+        measurerFilled: false,
+        glassFilled: false,
+      };
+
+      const levelTitleEl = document.getElementById("level-title");
+      const levelSubtitleEl = document.getElementById("level-subtitle");
+      const draggablesListEl = document.getElementById("draggables-list");
+      const dropzonesListEl = document.getElementById("dropzones-list");
+      const nextLevelBtn = document.getElementById("next-level-btn");
+      const progressTextEl = document.getElementById("progress-text");
+      const finalSummaryEl = document.getElementById("final-summary");
+
+      const heritageBarEl = document.getElementById("heritage-bar");
+      const heritageLegendEl = document.getElementById("heritage-legend");
+      const heritageTotalLabelEl = document.getElementById(
+        "heritage-total-label"
+      );
+      const elementsPanel = document.getElementById("elements-panel");
+      elementsPanel.addEventListener("dragover", onDragOver);
+      elementsPanel.addEventListener("drop", onReturnDrop);
+
+      function initHeritageBar() {
+        heritageBarEl.innerHTML = "";
+        heritageLegendEl.innerHTML = "";
+
+        HERITAGES.forEach((h) => {
+          const seg = document.createElement("div");
+          seg.className = "heritage-segment";
+          seg.dataset.key = h.key;
+          seg.style.background = h.color;
+          heritageBarEl.appendChild(seg);
+
+          const legendItem = document.createElement("div");
+          legendItem.className = "heritage-legend-item";
+          const colorBox = document.createElement("div");
+          colorBox.className = "heritage-color-box";
+          colorBox.style.background = h.color;
+          const labelSpan = document.createElement("span");
+          labelSpan.textContent = h.label;
+          const percentSpan = document.createElement("span");
+          percentSpan.className = "heritage-percent";
+          percentSpan.id = `legend-${h.key}`;
+          percentSpan.textContent = " (0%)";
+          legendItem.appendChild(colorBox);
+          legendItem.appendChild(labelSpan);
+          legendItem.appendChild(percentSpan);
+          heritageLegendEl.appendChild(legendItem);
+        });
+
+        updateHeritageBar();
+      }
+
+      function updateHeritageBar() {
+        const totalPoints =
+          Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
+        heritageTotalLabelEl.textContent = `Total points: ${totalPoints}`;
+
+        HERITAGES.forEach((h) => {
+          const percent = (heritagePoints[h.key] / totalPoints) * 100;
+          const seg = heritageBarEl.querySelector(
+            `.heritage-segment[data-key="${h.key}"]`
+          );
+          if (seg) {
+            seg.style.width = `${percent.toFixed(2)}%`;
+            seg.title = `${h.label}: ${percent.toFixed(1)}%`;
+          }
+          const legendPercent = document.getElementById(`legend-${h.key}`);
+          if (legendPercent) {
+            legendPercent.textContent = ` (${percent.toFixed(1)}%)`;
+          }
+        });
+      }
+
+      function clearBoard() {
+        draggablesListEl.innerHTML = "";
+        dropzonesListEl.innerHTML = "";
+        currentPlacements = {};
+        dropzoneContents = {};
+        nextLevelBtn.disabled = true;
+        finalSummaryEl.style.display = "none";
+        finalSummaryEl.innerHTML = "";
+        froccsState = {
+          setupComplete: false,
+          measurerFilled: false,
+          glassFilled: false,
+        };
+      }
+
+      function loadLevel(index) {
+        const level = LEVELS[index];
+        if (!level) return;
+
+        clearBoard();
+
+        // soft background for the whole page per level
+        console.log("backgrouuuuund");
+        const treePanel = document.getElementById("tree-panel");
+
+        treePanel.style.backgroundImage = `url("${level.backgroundImage}")`;
+
+        levelTitleEl.textContent = level.title;
+        levelSubtitleEl.textContent = level.subtitle;
+        progressTextEl.textContent = `Step ${index + 1} / ${LEVELS.length}`;
+
+        level.elements.forEach((elem, idx) => {
+          const item = document.createElement("div");
+          item.className = "draggable in-panel";
+          item.draggable = true;
+          item.dataset.elementId = elem.id;
+          item.dataset.heritage = elem.heritage;
+
+          const img = document.createElement("img");
+          img.src = elem.image || "assets/placeholder.png";
+          img.alt = elem.id;
+
+          item.appendChild(img);
+
+          item.addEventListener("dragstart", onDragStart);
+          item.addEventListener("dragend", onDragEnd);
+
+          draggablesListEl.appendChild(item);
+        });
+
+        level.dropzones.forEach((dz, i) => {
+          const zone = document.createElement("div");
+          zone.className = "dropzone";
+          zone.dataset.dropzoneId = dz.id;
+
+          // --- NO LABEL / HERITAGE / HINT ANYMORE ---
+
+          // --- positioning logic ---
+          zone.style.position = "absolute";
+
+          if (
+            dz.position &&
+            typeof dz.position.x === "number" &&
+            typeof dz.position.y === "number"
+          ) {
+            // Use custom coordinates from level config
+            zone.style.left = dz.position.x + "%";
+            zone.style.top = dz.position.y + "%";
+            zone.style.transform = "translate(-50%, -50%)";
+          } else {
+            // Fallback: auto-row under the tree
+            const count = level.dropzones.length;
+            const x = ((i + 1) / (count + 1)) * 100; // evenly spaced
+            zone.style.left = x + "%";
+            zone.style.bottom = "7%";
+            zone.style.transform = "translate(-50%, 0)";
+          }
+
+          if (dz.size) {
+            if (dz.size.width) zone.style.width = dz.size.width + "px";
+            if (dz.size.height) zone.style.height = dz.size.height + "px";
+          }
+          // -------------------------------
+
+          zone.addEventListener("dragover", onDragOver);
+          zone.addEventListener("dragleave", onDragLeave);
+          zone.addEventListener("drop", onDrop);
+
+          dropzonesListEl.appendChild(zone);
+        });
+      }
+
+      function onDragStart(ev) {
+        ev.dataTransfer.setData("text/plain", ev.target.dataset.elementId);
+        ev.dataTransfer.effectAllowed = "move";
+      }
+
+      function onDragEnd() {
+        // nothing special
+      }
+
+      function onDragOver(ev) {
+        ev.preventDefault();
+        ev.dataTransfer.dropEffect = "move";
+        if (
+          this.classList.contains("dropzone") ||
+          this.id === "elements-panel"
+        ) {
+          this.classList.add("dropping");
+        }
+      }
+
+      function onDragLeave(ev) {
+        this.classList.remove("dropping");
+      }
+
+      function onDrop(ev) {
+        ev.preventDefault();
+        this.classList.remove("dropping");
+
+        const elementId = ev.dataTransfer.getData("text/plain");
+        if (!elementId) return;
+
+        const dragged = document.querySelector(
+          `.draggable[data-element-id="${elementId}"]`
+        );
+        if (!dragged) return;
+
+        const level = LEVELS[currentLevelIndex];
+        const dropzoneId = this.dataset.dropzoneId;
+
+        // If this level has special froccs behaviour, let a custom handler decide
+        if (level.type === "froccs") {
+          handleFroccsDrop(level, this, dragged, elementId, dropzoneId);
+          return; // don't run the generic logic
+        }
+
+        // --- Generic behaviour for other levels ---
+
+        // Enforce one element per dropzone if configured
+        if (level.maxPerDropzone === 1 && dropzoneContents[dropzoneId]) {
+          // dropzone already occupied -> ignore or you could implement swap if you want
+          return;
+        }
+
+        this.appendChild(dragged);
+        dragged.classList.remove("in-panel");
+        dragged.classList.add("on-board");
+
+        currentPlacements[elementId] = this.dataset.dropzoneId;
+
+        const expected = level.elements.length;
+        const actual = Object.keys(currentPlacements).length;
+        if (actual >= expected) {
+          nextLevelBtn.disabled = false;
+        }
+      }
+
+      function setElementImage(elementId, newSrc) {
+        const el = document.querySelector(
+          `.draggable[data-element-id="${elementId}"] img`
+        );
+        if (el) {
+          el.src = newSrc;
+        }
+      }
+
+      function handleFroccsDrop(
+        level,
+        dropzoneEl,
+        dragged,
+        elementId,
+        dropzoneId
+      ) {
+        const wineId = "wineBottle";
+        const measurerId = "measurer";
+        const glassId = "glass";
+
+        // 1) SETUP PHASE: place each item into its own dropzone
+        if (!froccsState.setupComplete) {
+          // Enforce one element per dropzone
+          if (level.maxPerDropzone === 1 && dropzoneContents[dropzoneId]) {
+            return; // zone already used
+          }
+
+          // Place the element visually
+          dropzoneEl.appendChild(dragged);
+          dragged.classList.remove("in-panel");
+          dragged.classList.add("on-board");
+
+          dropzoneContents[dropzoneId] = elementId;
+          currentPlacements[elementId] = dropzoneId;
+
+          // Check if all three key elements are placed
+          const placedIds = Object.values(dropzoneContents);
+          const hasBottle = placedIds.includes(wineId);
+          const hasMeasurer = placedIds.includes(measurerId);
+          const hasGlass = placedIds.includes(glassId);
+
+          if (hasBottle && hasMeasurer && hasGlass) {
+            froccsState.setupComplete = true;
+            // (Optional: show some small hint like "Now pour the wine into the measurer")
+          }
+
+          // At this stage you can also require all 3 placed before enabling next button:
+          const expected = level.elements.length;
+          const actual = Object.keys(currentPlacements).length;
+          if (actual >= expected) {
+            nextLevelBtn.disabled = false;
+          }
+          return;
+        }
+
+        // 2) MIXING PHASE:
+        //   - we NO LONGER move the elements between zones
+        //   - drops are interpreted as "actions" instead of placements
+
+        // a) Pour wine into measurer
+        const measurerInThisZone = dropzoneContents[dropzoneId] === measurerId;
+        const glassInThisZone = dropzoneContents[dropzoneId] === glassId;
+
+        if (
+          elementId === wineId &&
+          measurerInThisZone &&
+          !froccsState.measurerFilled
+        ) {
+          // Don't move the wine bottle, just change the measurer image
+          froccsState.measurerFilled = true;
+          setElementImage(measurerId, "assets/measurer_1dl.png"); // update this path
+          return;
+        }
+
+        // b) Pour measurer into glass (only if measurer has wine)
+        if (
+          elementId === measurerId &&
+          glassInThisZone &&
+          froccsState.measurerFilled &&
+          !froccsState.glassFilled
+        ) {
+          froccsState.glassFilled = true;
+          setElementImage(glassId, "assets/glass_with_wine.png"); // update path
+          // (Optional: maybe also reset measurer image to empty)
+          // setElementImage(measurerId, "assets/measurer_empty.png");
+          return;
+        }
+
+        // If none of the special cases matched, you can ignore the drop
+        // or fall back to generic behaviour if you want
+      }
+
+      function applyPlacementsAndAdvance() {
+        const level = LEVELS[currentLevelIndex];
+        const pointPerPlacement = 7; // or whatever you want
+
+        // For each placed element in this level…
+        Object.entries(currentPlacements).forEach(([elementId, dropzoneId]) => {
+          // Find the element config in the current level
+          const elemConfig = level.elements.find((e) => e.id === elementId);
+          if (!elemConfig || !elemConfig.heritage) return;
+
+          const key = elemConfig.heritage; // e.g. "hungarian", "italian", etc.
+          if (heritagePoints.hasOwnProperty(key)) {
+            heritagePoints[key] += pointPerPlacement;
+          }
+        });
+
+        // Now redraw the bar
+        updateHeritageBar();
+
+        // Go to the next level / finish game
+        currentLevelIndex++;
+        if (currentLevelIndex < LEVELS.length) {
+          loadLevel(currentLevelIndex);
+        } else {
+          finishGame();
+        }
+      }
+
+      function onReturnDrop(ev) {
+        ev.preventDefault();
+
+        const elementId = ev.dataTransfer.getData("text/plain");
+        if (!elementId) return;
+
+        const dragged = document.querySelector(
+          `.draggable[data-element-id="${elementId}"]`
+        );
+        if (!dragged) return;
+
+        // Move it back into the GRID, not the panel itself
+        draggablesListEl.appendChild(dragged);
+
+        // 🔄 switch size mode back
+        dragged.classList.remove("on-board");
+        dragged.classList.add("in-panel");
+
+        // Remove from dropzoneContents (free that dropzone again!)
+        const dzId = currentPlacements[elementId];
+        if (dzId && dropzoneContents) {
+          delete dropzoneContents[dzId];
+        }
+
+        // Remove from currentPlacements
+        delete currentPlacements[elementId];
+
+        // Disallow proceeding until all items are placed again
+        nextLevelBtn.disabled = true;
+      }
+
+      function finishGame() {
+        clearBoard();
+        levelTitleEl.textContent = "You’ve completed all 11 levels!";
+        levelSubtitleEl.textContent =
+          "Here is the heritage mix that emerged from your choices:";
+        nextLevelBtn.disabled = true;
+        nextLevelBtn.style.display = "none";
+        progressTextEl.textContent = "Game finished";
+
+        const totalPoints =
+          Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
+        finalSummaryEl.style.display = "block";
+
+        const list = document.createElement("ul");
+        list.style.listStyle = "none";
+        list.style.marginTop = "6px";
+        list.style.paddingLeft = "0";
+
+        HERITAGES.forEach((h) => {
+          const li = document.createElement("li");
+          const percent = (heritagePoints[h.key] / totalPoints) * 100;
+          li.textContent = `${h.label}: ${percent.toFixed(1)}%`;
+          list.appendChild(li);
+        });
+
+        const restartBtn = document.createElement("button");
+        restartBtn.id = "restart-btn";
+        restartBtn.textContent = "Play again from 100% Hungarian";
+        restartBtn.addEventListener("click", restartGame);
+
+        finalSummaryEl.innerHTML = "";
+        finalSummaryEl.appendChild(list);
+        finalSummaryEl.appendChild(restartBtn);
+      }
+
+      function restartGame() {
+        heritagePoints = {
+          hungarian: 100,
+          szekely: 0,
+          italian: 0,
+          russian: 0,
+          svab: 0,
+        };
+        currentLevelIndex = 0;
+        nextLevelBtn.style.display = "inline-flex";
+        updateHeritageBar();
+        loadLevel(currentLevelIndex);
+      }
+
+      nextLevelBtn.addEventListener("click", () => {
+        if (nextLevelBtn.disabled) return;
+        applyPlacementsAndAdvance();
+      });
+
+      // Initialize
+      initHeritageBar();
+      loadLevel(currentLevelIndex);
+    </script>
+  </body>
+</html>

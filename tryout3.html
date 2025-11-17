@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Heritage Mixer – Scrapbook Edition (Responsive)</title>
+
+  <style>
+    /* -------------------------------------------------------------
+       GLOBAL STYLE — SCRAPBOOK THEME
+    ------------------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: #f7efe7;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    /* -------------------------------------------------------------
+       BACKGROUND LAYERS
+    ------------------------------------------------------------- */
+    #tree-bg {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+      opacity: 0.95;
+    }
+
+    /* Makes VHS appear inside the shelf */
+    #shelf-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8;
+      background: linear-gradient(
+        rgba(0,0,0,0.12),
+        rgba(0,0,0,0.06) 40%,
+        rgba(0,0,0,0.04) 100%
+      );
+    }
+
+    #paper-grain {
+      position: fixed;
+      inset: 0;
+      background-image: url("backgrounds/paper_texture.png");
+      background-size: 600px;
+      opacity: 0.25;
+      mix-blend-mode: multiply;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* -------------------------------------------------------------
+       UI LAYER
+    ------------------------------------------------------------- */
+    #ui {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: rgba(255,255,255,0.85);
+      padding: 16px 22px;
+      border-bottom: 1px solid rgba(120,95,80,0.25);
+      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: #6b4e3c;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: #9c7d68;
+      margin-top: 3px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 18px;
+      gap: 10px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    #board {
+      flex: 1;
+      display: flex;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    /* -------------------------------------------------------------
+       LEFT PANEL — GRID OF DRAGGABLE ITEMS
+    ------------------------------------------------------------- */
+    #left-panel {
+      width: 150px;
+      min-width: 150px;
+      background: rgba(255,252,248,0.85);
+      border: 2px dashed rgba(135,108,91,0.35);
+      border-radius: 14px;
+      padding: 12px;
+      overflow-y: auto;
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #left-panel-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #826755;
+      margin-bottom: 10px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    #draggables {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+      gap: 10px;
+      position: relative;
+      z-index: 10;
+      pointer-events: auto;
+      overflow-y: auto;
+      min-height: 0;
+      flex: 1;
+    }
+
+    /* ensures area is always droppable even when empty */
+    #draggables-dropzone {
+      width: 100%;
+      height: 60px;
+      pointer-events: auto;
+    }
+
+    .draggable {
+      width: 100%;
+      cursor: grab;
+      transition: transform 0.15s ease, filter 0.15s ease;
+      display: flex;
+      justify-content: center;
+    }
+
+    .draggable img {
+      width: 50px;
+      height: auto;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+    }
+
+    .draggable:hover {
+      transform: rotate(-2deg) scale(1.08);
+    }
+
+    /* ON-BOARD size and layering */
+    .on-board img {
+      width: 90px;
+      height: auto;
+      pointer-events: none;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.20));
+      z-index: 5;
+      position: relative;
+    }
+
+    /* -------------------------------------------------------------
+       DROPZONES
+    ------------------------------------------------------------- */
+    #dropzones {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .dropzone {
+      position: absolute;
+      min-width: 70px;
+      min-height: 60px;
+      border: 2px dashed rgba(80,60,40,0.6);
+      border-radius: 10px;
+      background: rgba(255, 250, 245, 0.25);
+      pointer-events: auto;
+      z-index: 21;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .dropzone.dropping {
+      background: rgba(255,250,240,0.8);
+      transform: scale(1.05);
+    }
+
+    /* -------------------------------------------------------------
+       CONTROLS
+    ------------------------------------------------------------- */
+    #controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #7e6555;
+      padding-top: 8px;
+      flex-shrink: 0;
+    }
+
+    #next-btn {
+      background: #7f9d86;
+      color: #fffaf2;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(60,85,70,0.25);
+      transition: transform 0.1s ease, background 0.1s ease;
+    }
+
+    #next-btn:hover:not(:disabled) {
+      background: #6f8a76;
+      transform: translateY(-2px);
+    }
+
+    #next-btn:disabled {
+      background: #c4b7a9;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* -------------------------------------------------------------
+       HERITAGE BAR
+    ------------------------------------------------------------- */
+    footer {
+      background: rgba(255,250,240,0.88);
+      padding: 12px 20px;
+      border-top: 1px solid rgba(135,108,91,0.25);
+      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+    }
+
+    #heritage-bar-wrapper {
+      width: 100%;
+      height: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e7d5c4;
+      border: 1px solid rgba(135,108,91,0.4);
+    }
+
+    #heritage-bar {
+      height: 100%;
+      display: flex;
+    }
+
+    .heritage-segment {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    #heritage-legend {
+      font-size: 0.8rem;
+      margin-top: 6px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: #6b5343;
+    }
+
+    /* -------------------------------------------------------------
+       SUMMARY
+    ------------------------------------------------------------- */
+    #summary {
+      display: none;
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 14px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      color: #654c3d;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Background Layers -->
+  <div id="tree-bg"></div>
+  <div id="shelf-overlay"></div>
+  <div id="paper-grain"></div>
+
+  <!-- UI -->
+  <div id="ui">
+
+    <header>
+      <h1>Heritage Mixer</h1>
+      <p>Place the memories where they feel at home.</p>
+    </header>
+
+    <main>
+      <section id="board">
+
+        <!-- Left Panel -->
+        <div id="left-panel">
+          <div id="left-panel-title">Memories</div>
+          <div id="draggables">
+            <div id="draggables-dropzone"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <section id="controls">
+        <div id="progress"></div>
+        <button id="next-btn" disabled>Lock in →</button>
+      </section>
+
+      <section id="summary"></section>
+    </main>
+
+    <footer>
+      <div id="heritage-bar-wrapper">
+        <div id="heritage-bar"></div>
+      </div>
+      <div id="heritage-legend"></div>
+    </footer>
+
+  </div>
+
+  <!-- Dropzones Layer -->
+  <div id="dropzones"></div>
+
+  <script>
+    /* ============================================================
+       HERITAGE
+    ============================================================ */
+    const HERITAGES = [
+      { key: "hungarian", label: "Hungarian", color: "#b75b4b" },
+      { key: "szekely", label: "Székely", color: "#496c8e" },
+      { key: "italian", label: "Italian", color: "#587f57" },
+      { key: "russian", label: "Russian", color: "#7a5a96" },
+      { key: "svab", label: "Sváb", color: "#e2a543" }
+    ];
+
+    let heritagePoints = {
+      hungarian: 100,
+      szekely: 0,
+      italian: 0,
+      russian: 0,
+      svab: 0
+    };
+
+    /* ============================================================
+       LEVELS (EXAMPLES INCLUDED)
+    ============================================================ */
+    const LEVELS = [
+      {
+        id: 1,
+        background: "backgrounds/shelf.png",
+        dropzoneY: 55,
+        maxPerZone: 1,
+
+        elements: [
+          { id: "e1", image: "assets/vhs-no.png", heritage: "russian" },
+          { id: "e2", image: "assets/vhs-lion.png", heritage: "global" },
+          { id: "e3", image: "assets/vhs-szaffi.png", heritage: "hungarian" },
+          { id: "e4", image: "assets/vhs-winnie.png", heritage: "global" },
+        ],
+
+        dropzones: [
+          { id: "dz1" },
+          { id: "dz2" },
+          { id: "dz3" },
+          { id: "dz4" }
+        ]
+      },
+
+      {
+        id: 2,
+        background: "backgrounds/bar.png",
+        type: "froccs",
+        dropzoneY: 65,
+        maxPerZone: 1,
+
+        elements: [
+          { id: "wineBottle", image: "assets/wine_bottle.png" },
+          { id: "measurer", image: "assets/measurer_empty.png" },
+          { id: "glass", image: "assets/glass_empty.png" },
+          { id: "soda", image: "assets/sodabottle.png" },
+        ],
+
+        dropzones: [
+          { id: "dzBottle" },
+          { id: "dzMeasurer" },
+          { id: "dzGlass" }
+        ]
+      }
+    ];
+
+    /* ============================================================
+       GLOBAL GAME STATE
+    ============================================================ */
+    let currentLevel = 0;
+    let placements = {};
+    let zoneContents = {};
+    let froccs = { setup: false, measurerFilled: false, glassFilled: false };
+    let draggedId = null;
+
+    /* ============================================================
+       HERITAGE BAR INIT + UPDATE
+    ============================================================ */
+    function initBar() {
+      const legend = document.getElementById("heritage-legend");
+      const bar = document.getElementById("heritage-bar");
+      legend.innerHTML = "";
+      bar.innerHTML = "";
+
+      HERITAGES.forEach(h => {
+        const seg = document.createElement("div");
+        seg.className = "heritage-segment";
+        seg.dataset.key = h.key;
+        seg.style.background = h.color;
+        bar.appendChild(seg);
+
+        const item = document.createElement("div");
+        item.textContent = h.label;
+        legend.appendChild(item);
+      });
+
+      updateBar();
+    }
+
+    function updateBar() {
+      const total = Object.values(heritagePoints).reduce((a,b)=>a+b,0) || 1;
+      document.querySelectorAll(".heritage-segment").forEach(seg => {
+        const key = seg.dataset.key;
+        const pct = heritagePoints[key] / total * 100;
+        seg.style.width = pct + "%";
+      });
+    }
+
+    /* ============================================================
+       RESPONSIVE DROPZONE POSITIONING
+    ============================================================ */
+    function positionDropzones(level) {
+      const zones = document.querySelectorAll(".dropzone");
+      const n = zones.length;
+
+      zones.forEach((zone, index) => {
+        const slot = index + 1;
+        const x = (slot / (n + 1)) * 100;
+
+        zone.style.left = x + "%";
+        zone.style.top = (level.dropzoneY || 55) + "%";
+        zone.style.transform = "translate(-50%, -50%)";
+      });
+    }
+
+    /* ============================================================
+       LOAD LEVEL
+    ============================================================ */
+    function loadLevel(i) {
+      const level = LEVELS[i];
+      placements = {};
+      zoneContents = {};
+      froccs = { setup: false, measurerFilled: false, glassFilled: false };
+
+      document.getElementById("tree-bg").style.backgroundImage =
+        `url(${level.background})`;
+
+      document.getElementById("progress").textContent =
+        `Step ${i+1}/${LEVELS.length}`;
+
+      /* Load draggables */
+      const wrap = document.getElementById("draggables");
+      wrap.innerHTML = '<div id="draggables-dropzone"></div>';
+
+      level.elements.forEach(el => {
+        const d = document.createElement("div");
+        d.className = "draggable";
+        d.draggable = true;
+        d.dataset.id = el.id;
+        d.dataset.heritage = el.heritage;
+
+        const img = document.createElement("img");
+        img.src = el.image;
+
+        d.appendChild(img);
+        wrap.appendChild(d);
+
+        d.addEventListener("dragstart", dragStart);
+      });
+
+      /* Dropzones */
+      const zwrap = document.getElementById("dropzones");
+      zwrap.innerHTML = "";
+
+      level.dropzones.forEach(z => {
+        const dz = document.createElement("div");
+        dz.className = "dropzone";
+        dz.dataset.id = z.id;
+
+        dz.addEventListener("dragover", dragOver);
+        dz.addEventListener("dragleave", dragLeave);
+        dz.addEventListener("drop", dropItem);
+
+        zwrap.appendChild(dz);
+      });
+
+      /* Responsive auto-positioning */
+      positionDropzones(level);
+
+      document.getElementById("next-btn").disabled = true;
+    }
+
+    /* ============================================================
+       DRAG & DROP
+    ============================================================ */
+    function dragStart(ev) {
+      draggedId = ev.target.dataset.id;
+    }
+
+    function dragOver(ev) {
+      ev.preventDefault();
+      this.classList.add("dropping");
+    }
+
+    function dragLeave() {
+      this.classList.remove("dropping");
+    }
+
+    function dropItem(ev) {
+      ev.preventDefault();
+      this.classList.remove("dropping");
+
+      const level = LEVELS[currentLevel];
+      const dzid = this.dataset.id;
+      const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
+
+      // Froccs special logic
+      if (level.type === "froccs") {
+        handleFroccs(level, el, dzid);
+        return;
+      }
+
+      if (level.maxPerZone === 1 && zoneContents[dzid])
+        return;
+
+      this.appendChild(el);
+      el.classList.add("on-board");
+
+      zoneContents[dzid] = draggedId;
+      placements[draggedId] = dzid;
+
+      if (Object.keys(placements).length === level.elements.length)
+        document.getElementById("next-btn").disabled = false;
+    }
+
+    /* ============================================================
+       DRAG BACK TO PANEL (ALWAYS WORKS)
+    ============================================================ */
+    const draggablesPanel = document.getElementById("draggables");
+    const draggablesReturn = document.getElementById("draggables-dropzone");
+
+    document.addEventListener("dragover", (ev) => {
+      if (ev.target.id === "draggables-dropzone") ev.preventDefault();
+    });
+
+    document.addEventListener("drop", (ev) => {
+      if (ev.target.id !== "draggables-dropzone") return;
+
+      ev.preventDefault();
+      if (!draggedId) return;
+
+      const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
+      if (!el) return;
+
+      draggablesPanel.appendChild(el);
+      el.classList.remove("on-board");
+
+      const oldZone = placements[draggedId];
+      if (oldZone) {
+        delete placements[draggedId];
+        delete zoneContents[oldZone];
+      }
+
+      document.getElementById("next-btn").disabled = true;
+    });
+
+    /* ============================================================
+       FROCCS LOGIC
+    ============================================================ */
+    function handleFroccs(level, el, zoneId) {
+      const id = el.dataset.id;
+
+      const bottleIn = zoneContents[zoneId] === "wineBottle";
+      const measIn = zoneContents[zoneId] === "measurer";
+      const glassIn = zoneContents[zoneId] === "glass";
+
+      // Setup phase
+      if (!froccs.setup) {
+        if (level.maxPerZone === 1 && zoneContents[zoneId])
+          return;
+
+        document.querySelector(`.dropzone[data-id="${zoneId}"]`)
+          .appendChild(el);
+
+        el.classList.add("on-board");
+
+        zoneContents[zoneId] = id;
+        placements[id] = zoneId;
+
+        const ids = Object.values(zoneContents);
+        if (ids.includes("wineBottle") &&
+            ids.includes("measurer") &&
+            ids.includes("glass")) {
+          froccs.setup = true;
+        }
+
+        if (Object.keys(placements).length === level.elements.length)
+          document.getElementById("next-btn").disabled = false;
+
+        return;
+      }
+
+      // Pour bottle → measurer
+      if (id === "wineBottle" &&
+          measIn &&
+          !froccs.measurerFilled) {
+        froccs.measurerFilled = true;
+        const img = document.querySelector(`img[src$="measurer_empty.png"]`);
+        img.src = "assets/measurer_1dl.png";
+        return;
+      }
+
+      // Pour measurer → glass
+      if (id === "measurer" &&
+          glassIn &&
+          froccs.measurerFilled &&
+          !froccs.glassFilled) {
+        froccs.glassFilled = true;
+        const img = document.querySelector(`img[src$="glass_empty.png"]`);
+        img.src = "assets/glass_with_wine.png";
+        return;
+      }
+    }
+
+    /* ============================================================
+       NEXT LEVEL
+    ============================================================ */
+    document.getElementById("next-btn").addEventListener("click", () => {
+      const level = LEVELS[currentLevel];
+
+      Object.entries(placements).forEach(([eid, _]) => {
+        const el = level.elements.find(e => e.id === eid);
+        if (!el || !el.heritage) return;
+
+        if (heritagePoints[el.heritage] !== undefined)
+          heritagePoints[el.heritage] += 7;
+      });
+
+      updateBar();
+
+      currentLevel++;
+      if (currentLevel < LEVELS.length) {
+        loadLevel(currentLevel);
+      } else {
+        finishGame();
+      }
+    });
+
+    /* ============================================================
+       END GAME
+    ============================================================ */
+    function finishGame() {
+      document.getElementById("draggables").innerHTML = "";
+      document.getElementById("dropzones").innerHTML = "";
+      document.getElementById("next-btn").style.display = "none";
+
+      const summary = document.getElementById("summary");
+      summary.style.display = "block";
+
+      let html = `<h2>Your heritage mix</h2><ul>`;
+      const total = Object.values(heritagePoints).reduce((a,b)=>a+b,0);
+
+      HERITAGES.forEach(h => {
+        const pct = (heritagePoints[h.key] / total * 100).toFixed(1);
+        html += `<li>${h.label}: ${pct}%</li>`;
+      });
+
+      html += `</ul>`;
+      summary.innerHTML = html;
+    }
+
+    /* ============================================================
+       START GAME
+    ============================================================ */
+    initBar();
+    loadLevel(currentLevel);
+
+  </script>
+
+</body>
+</html>

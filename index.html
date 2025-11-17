@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fernweh</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+  <!-- Header -->
+  <header>
+    <div class="brand"><span class="brandDot" aria-hidden="true"></span> Fernweh</div>
+    <div class="toolbar">
+      <button class="btn" id="btnReset" title="Reset scene (R)">Reset</button>
+      <button class="btn" id="btnMute" aria-pressed="false" title="Toggle sound (M)">🔊 Sound</button>
+      <span class="spacer"></span>
+      <span class="ribbon" id="progress">Scene 1 / 2</span>
+      <button class="btn primary" id="btnNext" title="Next scene (N)">Next ▶</button>
+    </div>
+  </header>
+
+  <!-- Info -->
+  <section class="infoBar">
+    <h2 id="sceneTitle">Scene</h2>
+    <p id="sceneMeta">Arrange the items to the matching spots. Drag with mouse/touch, or focus an item and press Space to grab; then use Arrow keys to move, Space to drop.</p>
+    <p id="sceneNotes"></p>
+  </section>
+
+  <!-- Stage -->
+  <main class="screen">
+    <div class="board">
+      <div class="boardInner">
+        <div class="stage" id="stage" aria-label="Playfield">
+          <div class="hint" id="hint" aria-hidden="true"></div>
+          <div class="targets" id="targets" aria-hidden="true"></div>
+          <div class="items" id="items"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Meters -->
+  <footer class="statusbar" aria-label="Heritage meters">
+    <div class="meter" data-key="hungarian"><span class="label">Hungarian</span><div class="track"><div class="fill"></div></div><span class="value">0%</span></div>
+    <div class="meter" data-key="russian"><span class="label">Russian</span><div class="track"><div class="fill"></div></div><span class="value">0%</span></div>
+    <div class="meter" data-key="sekler"><span class="label">Székely</span><div class="track"><div class="fill"></div></div><span class="value">0%</span></div>
+    <div class="meter" data-key="germanHungarian"><span class="label">German-Hungarian</span><div class="track"><div class="fill"></div></div><span class="value">0%</span></div>
+    <div class="meter" data-key="italian"><span class="label">Italian</span><div class="track"><div class="fill"></div></div><span class="value">0%</span></div>
+  </footer>
+
+
+  <!-- Level data (no comments allowed in JSON) -->
+  <script type="application/json" id="levels">
+  {
+    "tolerance": 18,
+    "scenes": [
+      {
+        "id": "winter-holiday-mix",
+        "title": "Winter Holiday Mix",
+        "notes": "Bethlehem nativity meets Ded Moroz.",
+        "hint": "❄️",
+        "targets": [
+          {"x": 140, "y": 140, "emoji": "⭐", "accepts": "star"},
+          {"x": 300, "y": 280, "emoji": "🎄", "accepts": "tree"},
+          {"x": 460, "y": 140, "emoji": "🎁", "accepts": "gift"},
+          {"x": 620, "y": 280, "emoji": "🎅", "accepts": "ded"}
+        ],
+        "pieces": [
+          {"x": 660, "y": 80,  "emoji": "🎄", "type": "tree", "label": "Tree", "heritage":"hungarian"},
+          {"x": 540, "y": 340, "emoji": "🎁", "type": "gift", "label": "Gift", "heritage":"italian"},
+          {"x": 240, "y": 360, "emoji": "⭐", "type": "star", "label": "Star", "heritage":"sekler"},
+          {"x": 400, "y": 360, "emoji": "🎅", "type": "ded", "label": "Ded Moroz", "heritage":"russian"}
+        ]
+      },
+      {
+        "id": "graduation-photo",
+        "title": "Graduation Photo",
+        "notes": "Arrange mortarboard, diploma, flag and flower.",
+        "hint": "🎓",
+        "targets": [
+          {"x": 200, "y": 140, "emoji": "🎓", "accepts": "cap"},
+          {"x": 360, "y": 280, "emoji": "📜", "accepts": "diploma"},
+          {"x": 520, "y": 140, "emoji": "🚩", "accepts": "flag"},
+          {"x": 680, "y": 280, "emoji": "🌸", "accepts": "flower"}
+        ],
+        "pieces": [
+          {"x": 680, "y": 80,  "emoji": "🌸", "type": "flower", "label": "Flower", "heritage":"italian"},
+          {"x": 560, "y": 340, "emoji": "📜", "type": "diploma", "label": "Diploma", "heritage":"hungarian"},
+          {"x": 260, "y": 360, "emoji": "🎓", "type": "cap", "label": "Cap", "heritage":"germanHungarian"},
+          {"x": 420, "y": 360, "emoji": "🚩", "type": "flag", "label": "Flag", "heritage":"sekler"}
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="script.js" defer></script>
+</body>
+
+</html>

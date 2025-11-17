@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Heritage Mixer – Scrapbook Edition</title>
+
+    <style>
+      /* -------------------------------------------------------------
+       GLOBAL STYLE — SCRAPBOOK THEME
+    ------------------------------------------------------------- */
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      body {
+        background: #f7efe7;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      /* -------------------------------------------------------------
+       TREE BACKGROUND LAYER
+    ------------------------------------------------------------- */
+
+      #tree-bg {
+        position: fixed;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
+        opacity: 0.9;
+        background-size: 1600px auto; /* fixed width */
+        background-position: center left;
+      }
+
+      /* soft vignette */
+      #tree-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at center,
+          transparent 40%,
+          rgba(0, 0, 0, 0.18) 100%
+        );
+        pointer-events: none;
+      }
+
+      /* slight paper texture overlay */
+      #paper-grain {
+        position: fixed;
+        inset: 0;
+        background-image: url("backgrounds/paper_texture.png");
+        background-size: 600px;
+        opacity: 0.25;
+        mix-blend-mode: multiply;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* -------------------------------------------------------------
+       UI LAYER (HEADER + LEFT PANEL + FOOTER)
+    ------------------------------------------------------------- */
+
+      #ui {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* prevent weird overflow */
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 16px 22px;
+        border-bottom: 1px solid rgba(120, 95, 80, 0.25);
+        backdrop-filter: blur(4px);
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        color: #6b4e3c;
+        font-weight: 700;
+      }
+
+      header p {
+        font-size: 0.9rem;
+        color: #9c7d68;
+        margin-top: 3px;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 18px;
+
+        overflow-y: auto; /* <— THIS makes the UI safe */
+        overscroll-behavior: contain;
+        min-height: 0; /* required for nested flex scrolling */
+      }
+
+      #board {
+        flex: 1;
+        display: flex;
+        gap: 16px;
+        min-height: 0;
+      }
+
+      /* -------------------------------------------------------------
+       LEFT PANEL — DRAGGABLE ITEMS
+    ------------------------------------------------------------- */
+
+      #left-panel {
+        width: 180px;
+        min-width: 150px;
+        background: rgba(255, 252, 248, 0.6);
+        border-radius: 18px;
+        border: #654c3d8d 2px dashed;
+        display: flex;
+        flex-direction: column;
+
+        overflow-y: auto; /* panel scrolls */
+        max-height: 100%; /* never pushes other UI */
+      }
+
+      #left-panel-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #826755;
+        margin-bottom: 8px;
+        padding-top: 10px;
+        text-align: center;
+      }
+
+      /* -------------------------------------------------------------
+   DRAGGABLE ITEMS — FIXED SIZES
+------------------------------------------------------------- */
+
+      #draggables {
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+        gap: 7px;
+        position: relative;
+        z-index: 10; /* Above dropzones */
+        pointer-events: auto;
+        min-height: 100%;
+        flex: 1;
+        min-height: 0; /* prevents flex overflow */
+        overflow-y: auto;
+      }
+
+      .draggable {
+        width: 100%;
+        cursor: grab;
+        transition: transform 0.15s ease, filter 0.15s ease;
+        display: flex;
+        justify-content: center;
+      }
+
+      .draggable img {
+        width: 60px; /* small in panel */
+        height: fit-content;
+        pointer-events: none; /* required! */
+        filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+      }
+
+      .draggable:hover {
+        transform: rotate(-2deg) scale(1.08);
+      }
+
+      /* When placed on the board */
+      .on-board img {
+        width: 90px; /* medium on board */
+        height: auto;
+        filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      .on-board:hover {
+        transform: scale(1.03);
+      }
+
+      /* -------------------------------------------------------------
+       DROPZONES
+    ------------------------------------------------------------- */
+
+      #dropzones {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+      }
+
+      .dropzone {
+        position: absolute;
+        min-width: 60px;
+        min-height: 300px;
+        border: 2px dashed rgba(80, 60, 40, 0.6);
+        border-radius: 10px;
+        background: rgba(255, 250, 245, 0.25);
+        pointer-events: auto;
+        transition: background 0.15s ease, transform 0.15s ease;
+        z-index: 21;
+      }
+
+      .dropzone.dropping {
+        background: rgba(255, 250, 240, 0.8);
+        transform: scale(1.05);
+      }
+
+      /* -------------------------------------------------------------
+       CONTROLS
+    ------------------------------------------------------------- */
+
+      #controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #ffffff;
+        padding-top: 8px;
+      }
+
+      #next-btn {
+        background: #7f9d86;
+        color: #fffaf2;
+        border: none;
+        padding: 9px 18px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(60, 85, 70, 0.25);
+        transition: transform 0.1s ease, background 0.1s ease;
+      }
+
+      #next-btn:hover:not(:disabled) {
+        background: #6f8a76;
+        transform: translateY(-2px);
+      }
+
+      #next-btn:disabled {
+        background: #c4b7a9;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+/* -------------------------------------------------------------
+   HERITAGE FOOTER — SCRAPBOOK PASTEL STYLE
+------------------------------------------------------------- */
+
+#heritage-footer {
+  background: rgba(255,250,245,0.95);
+  padding: 5px 24px;
+  border-top: 3px dashed rgba(140,110,90,0.4);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 -4px 14px rgba(0,0,0,0.12);
+}
+
+/* WRAPPER */
+#heritage-bar-wrapper {
+  width: 100%;
+  height: 38px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f5e6d6;
+  border: 2px dashed rgba(150,120,100,0.35);
+  position: relative;
+  margin-bottom: 10px;
+}
+
+/* MAIN BAR */
+#heritage-bar {
+  height: 100%;
+  display: flex;
+  position: relative;
+}
+
+/* LEGEND */
+#heritage-legend {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* pastel pill legend */
+.heritage-legend-item {
+  background: rgba(255,255,255,0.6);
+  border: 1px dashed rgba(130,110,90,0.4);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #6b5343;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* little color icon */
+.heritage-color-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.25);
+}
+
+
+      /* -------------------------------------------------------------
+       FINAL SUMMARY
+    ------------------------------------------------------------- */
+
+      #summary {
+        display: none;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 14px;
+        margin-top: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: #654c3d;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Layers -->
+    <div id="tree-bg"></div>
+    <div id="paper-grain"></div>
+
+    <!-- UI -->
+    <div id="ui">
+      <!-- <header>
+      <h1>Heritage Mixer</h1>
+      <p>Place the memories where they feel at home.</p>
+    </header> -->
+
+      <main>
+        <section id="board">
+          <!-- Left Panel -->
+          <div id="left-panel">
+            <div id="left-panel-title">Memories</div>
+            <div id="draggables"></div>
+          </div>
+        </section>
+
+        <section id="controls">
+          <div id="progress"></div>
+          <button id="next-btn" disabled>Lock in →</button>
+        </section>
+
+        <section id="summary"></section>
+      </main>
+
+      <footer id="heritage-footer">
+
+  <div id="heritage-bar-wrapper">
+    <div id="heritage-bar"></div>
+  </div>
+
+  <div id="heritage-legend"></div>
+
+</footer>
+    </div>
+
+    <!-- Dropzones Layer -->
+    <div id="dropzones"></div>
+
+    <script>
+      /* -------------------------------------------------------------
+       JAVASCRIPT (CLEAN, REWRITTEN)
+    ------------------------------------------------------------- */
+
+      /* === Heritage Definitions === */
+      const HERITAGES = [
+  { key:"hungarian", label:"Hungarian", color:"#d78f88" },
+  { key:"szekely",   label:"Székely",   color:"#8aa9c9" },
+  { key:"italian",   label:"Italian",   color:"#91b497" },
+  { key:"russian",   label:"Russian",   color:"#a892c4" },
+  { key:"svab",      label:"Sváb",      color:"#e4c27a" }
+];
+
+
+      let heritagePoints = {
+        hungarian: 100,
+        szekely: 0,
+        italian: 0,
+        russian: 0,
+        svab: 0,
+      };
+
+      /* === Levels === */
+      const LEVELS = [
+        {
+          id: 1,
+          background: "backgrounds/shelf.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "e1", image: "assets/vhs-no.png", heritage: "russian" },
+            { id: "e2", image: "assets/vhs-lion.png", heritage: "global" },
+            { id: "e3", image: "assets/vhs-szaffi.png", heritage: "hungarian" },
+            { id: "e4", image: "assets/vhs-winnie.png", heritage: "global" },
+          ],
+          dropzones: [
+            { id: "dz1", x: 21, y: 60 },
+            { id: "dz2", x: 26, y: 60 },
+            { id: "dz3", x: 31, y: 60 },
+            { id: "dz4", x: 36, y: 60 },
+          ],
+        },
+
+        {
+          id: 2,
+          background: "backgrounds/bar.png",
+          type: "froccs",
+          maxPerZone: 1,
+          elements: [
+            { id: "wineBottle", image: "assets/wine_bottle.png" },
+            { id: "measurer", image: "assets/measurer_empty.png" },
+            { id: "glass", image: "assets/glass_empty.png" },
+            { id: "soda", image: "assets/sodabottle.png" },
+          ],
+          dropzones: [
+            { id: "dzBottle", x: 30, y: 65 },
+            { id: "dzMeasurer", x: 50, y: 65 },
+            { id: "dzGlass", x: 70, y: 65 },
+          ],
+        },
+
+        /* Remaining levels unchanged — add yours back here exactly as before. */
+      ];
+
+      let currentLevel = 0;
+      let placements = {};
+      let zoneContents = {};
+      let froccs = { setup: false, measurerFilled: false, glassFilled: false };
+
+      /* -------------------------------------------------------------
+       INITIALIZERS
+    ------------------------------------------------------------- */
+function initBar() {
+  const bar = document.getElementById("heritage-bar");
+  const legend = document.getElementById("heritage-legend");
+
+  bar.innerHTML = "";
+  legend.innerHTML = "";
+
+  HERITAGES.forEach(h => {
+    // segment
+    const seg = document.createElement("div");
+    seg.className = "heritage-segment";
+    seg.dataset.key = h.key;
+    seg.style.background = h.color;
+    seg.style.width = "0%"; // animate from 0
+    bar.appendChild(seg);
+
+    // legend pill
+    const item = document.createElement("div");
+    item.className = "heritage-legend-item";
+    item.innerHTML = `
+      <div class="heritage-color-box" style="background:${h.color}"></div>
+      ${h.label}
+    `;
+    legend.appendChild(item);
+  });
+
+  updateBar();
+}
+
+
+function updateBar() {
+  const total = Object.values(heritagePoints).reduce((a,b)=>a+b,0) || 1;
+
+  HERITAGES.forEach(h => {
+    const seg = document.querySelector(`.heritage-segment[data-key="${h.key}"]`);
+    if (!seg) return;
+
+    const pct = (heritagePoints[h.key] / total) * 100;
+    seg.style.width = pct + "%";
+
+    // Do NOT show label if:
+    // - it's 100%
+    // - or it's the only segment with points
+    const isOnlySegmentWithPoints =
+      pct === 100 && Object.values(heritagePoints).filter(v => v > 0).length === 1;
+
+    if (pct === 100 || isOnlySegmentWithPoints) {
+      seg.textContent = "";
+    } else {
+      seg.textContent = pct > 7 ? `${h.label} ${pct.toFixed(0)}%` : "";
+    }
+  });
+}
+
+
+
+      /* -------------------------------------------------------------
+       LOAD LEVEL
+    ------------------------------------------------------------- */
+
+      function loadLevel(i) {
+        const level = LEVELS[i];
+        placements = {};
+        zoneContents = {};
+
+        document.getElementById(
+          "tree-bg"
+        ).style.backgroundImage = `url(${level.background})`;
+
+        document.getElementById("progress").textContent = `Step ${i + 1}/${
+          LEVELS.length
+        }`;
+
+        /* Draggables */
+        const dwrap = document.getElementById("draggables");
+        dwrap.innerHTML = "";
+
+        level.elements.forEach((el) => {
+          const d = document.createElement("div");
+          d.className = "draggable";
+          d.draggable = true;
+          d.dataset.id = el.id;
+          d.dataset.heritage = el.heritage;
+
+          const img = document.createElement("img");
+          img.src = el.image;
+
+          d.appendChild(img);
+          dwrap.appendChild(d);
+
+          d.addEventListener("dragstart", dragStart);
+        });
+
+        /* Dropzones */
+        const zwrap = document.getElementById("dropzones");
+        zwrap.innerHTML = "";
+
+        level.dropzones.forEach((z) => {
+          const dz = document.createElement("div");
+          dz.className = "dropzone";
+          dz.dataset.id = z.id;
+
+          dz.style.left = z.x + "%";
+          dz.style.top = z.y + "%";
+          dz.style.transform = "translate(-50%, -50%)";
+
+          dz.addEventListener("dragover", dragOver);
+          dz.addEventListener("dragleave", dragLeave);
+          dz.addEventListener("drop", dropItem);
+
+          zwrap.appendChild(dz);
+        });
+
+        document.getElementById("next-btn").disabled = true;
+      }
+
+      /* -------------------------------------------------------------
+       DRAG & DROP
+    ------------------------------------------------------------- */
+
+      let draggedId = null;
+
+      function dragStart(ev) {
+        draggedId = ev.target.dataset.id;
+      }
+
+      function dragOver(ev) {
+        ev.preventDefault();
+        this.classList.add("dropping");
+      }
+
+      function dragLeave() {
+        this.classList.remove("dropping");
+      }
+
+      function dropItem(ev) {
+        ev.preventDefault();
+        this.classList.remove("dropping");
+
+        const level = LEVELS[currentLevel];
+        const dzid = this.dataset.id;
+        const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
+
+        // froccs special handling
+        if (level.type === "froccs") {
+          handleFroccs(level, el, dzid);
+          return;
+        }
+
+        if (level.maxPerZone === 1 && zoneContents[dzid]) return;
+
+        this.appendChild(el);
+        el.classList.add("on-board");
+
+        zoneContents[dzid] = draggedId;
+        placements[draggedId] = dzid;
+
+        if (Object.keys(placements).length === level.elements.length)
+          document.getElementById("next-btn").disabled = false;
+      }
+
+      /* ============================================================
+   RETURN ITEM TO DRAGGABLE PANEL
+============================================================ */
+
+      const draggablesPanel = document.getElementById("draggables");
+
+      draggablesPanel.addEventListener("dragover", (ev) => {
+        ev.preventDefault();
+      });
+
+      draggablesPanel.addEventListener("drop", (ev) => {
+        ev.preventDefault();
+        if (!draggedId) return;
+
+        const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
+        if (!el) return;
+
+        // Remove from dropzone visually
+        draggablesPanel.appendChild(el);
+
+        // Remove on-board styling
+        el.classList.remove("on-board");
+
+        // Remove from bookkeeping
+        const oldZone = placements[draggedId];
+        if (oldZone) {
+          delete placements[draggedId];
+          delete zoneContents[oldZone];
+        }
+
+        // Reset button
+        document.getElementById("next-btn").disabled = true;
+      });
+
+      /* -------------------------------------------------------------
+       FROCCS LOGIC
+    ------------------------------------------------------------- */
+
+      function handleFroccs(level, el, zoneId) {
+        const id = el.dataset.id;
+
+        const bottleIn = zoneContents[zoneId] === "wineBottle";
+        const measIn = zoneContents[zoneId] === "measurer";
+        const glassIn = zoneContents[zoneId] === "glass";
+
+        // Setup phase
+        if (!froccs.setup) {
+          if (level.maxPerZone === 1 && zoneContents[zoneId]) return;
+
+          document
+            .querySelector(`.dropzone[data-id="${zoneId}"]`)
+            .appendChild(el);
+
+          zoneContents[zoneId] = id;
+          placements[id] = zoneId;
+
+          const ids = Object.values(zoneContents);
+          if (
+            ids.includes("wineBottle") &&
+            ids.includes("measurer") &&
+            ids.includes("glass")
+          ) {
+            froccs.setup = true;
+          }
+
+          if (Object.keys(placements).length === level.elements.length)
+            document.getElementById("next-btn").disabled = false;
+
+          return;
+        }
+
+        // Pour bottle -> measurer
+        if (id === "wineBottle" && measIn && !froccs.measurerFilled) {
+          froccs.measurerFilled = true;
+          const img = document.querySelector(`img[src$="measurer_empty.png"]`);
+          img.src = "assets/measurer_1dl.png";
+          return;
+        }
+
+        // Pour measurer -> glass
+        if (
+          id === "measurer" &&
+          glassIn &&
+          froccs.measurerFilled &&
+          !froccs.glassFilled
+        ) {
+          froccs.glassFilled = true;
+          const img = document.querySelector(`img[src$="glass_empty.png"]`);
+          img.src = "assets/glass_with_wine.png";
+          return;
+        }
+      }
+
+      /* -------------------------------------------------------------
+       NEXT LEVEL
+    ------------------------------------------------------------- */
+
+      document.getElementById("next-btn").addEventListener("click", () => {
+        const level = LEVELS[currentLevel];
+
+        Object.entries(placements).forEach(([eid, _]) => {
+          const el = level.elements.find((e) => e.id === eid);
+          if (!el || !el.heritage) return;
+
+          if (heritagePoints[el.heritage] !== undefined)
+            heritagePoints[el.heritage] += 7;
+        });
+
+        updateBar();
+
+        currentLevel++;
+        if (currentLevel < LEVELS.length) {
+          loadLevel(currentLevel);
+        } else {
+          finishGame();
+        }
+      });
+
+      /* -------------------------------------------------------------
+       END GAME
+    ------------------------------------------------------------- */
+
+      function finishGame() {
+        document.getElementById("draggables").innerHTML = "";
+        document.getElementById("dropzones").innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+
+        const summary = document.getElementById("summary");
+        summary.style.display = "block";
+
+        let html = `<h2>Your heritage mix</h2><ul>`;
+        const total = Object.values(heritagePoints).reduce((a, b) => a + b, 0);
+
+        HERITAGES.forEach((h) => {
+          const pct = ((heritagePoints[h.key] / total) * 100).toFixed(1);
+          html += `<li>${h.label}: ${pct}%</li>`;
+        });
+
+        html += `</ul>`;
+        summary.innerHTML = html;
+      }
+
+      /* -------------------------------------------------------------
+       START
+    ------------------------------------------------------------- */
+
+      initBar();
+      loadLevel(currentLevel);
+    </script>
+  </body>
+</html>

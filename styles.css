@@ -1,0 +1,423 @@
+/* =============================
+       Full-screen minimal board
+       (flat, soft, no drop-shadows)
+       ============================= */
+:root {
+  --bg-wood: #f4eee4;
+  --bg-paper: #faf7f0;
+  --ink-1: #2d3136;
+  --ink-2: #6b7280;
+  --note: #fff4b3;
+  --note-edge: #e5d86a;
+  --piece: #fffdfa;
+  --piece-edge: #e7e1cf;
+  --ok: #b6d8b6;
+  --ok-ink: #245e27;
+  --grad-1: #b9d3ff;
+  --grad-2: #bfe3bf;
+  --grad-3: #ffb3b3;
+}
+
+/* reset & base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+body {
+  font-family: "SF Pro Rounded", ui-rounded, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Color Emoji";
+  color: var(--ink-1);
+  background: repeating-linear-gradient(5deg, #f7f3ec 0 4px, #f9f6f0 4px 8px),
+    var(--bg-wood);
+  display: grid;
+  grid-template-rows: auto auto 1fr auto; /* header, info, stage, meters */
+  overflow: hidden;
+}
+
+/* header bar */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: var(--bg-paper);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 900;
+  color: var(--ink-1);
+}
+.brandDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #b6c5e8;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.ribbon {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+/* info bar */
+.infoBar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-paper);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+#sceneTitle {
+  font-weight: 800;
+  margin: 0;
+}
+#sceneMeta,
+#sceneNotes {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+/* main stage uses entire remaining viewport */
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-paper);
+}
+.boardInner {
+  position: absolute;
+  inset: 0;
+}
+.stage {
+  position: relative; /* key: coordinate space root */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+}
+
+/* layers: exact fit, consistent coordinate space */
+.hint,
+.targets,
+.items {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+}
+.hint {
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  user-select: none;
+  font-size: 18vw;
+  opacity: 0.04;
+}
+.targets {
+  z-index: 1;
+}
+.items {
+  z-index: 2;
+}
+
+/* sticky-note targets (flat) */
+.spot {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border-radius: 6px;
+  background: var(--note);
+  border: 1px solid var(--note-edge);
+  display: grid;
+  place-items: center;
+  color: #7d7833;
+  font-size: 24px;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+.spot:hover {
+  transform: translateY(-1px);
+}
+.spot.filled {
+  background: var(--ok);
+  color: var(--ok-ink);
+  border-color: var(--ok);
+}
+
+/* draggable pieces (flat stickers) */
+.piece {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  background: var(--piece);
+  border: 1px solid var(--piece-edge);
+  display: grid;
+  place-items: center;
+  font-size: 40px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.1s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.piece:focus {
+  outline: 3px solid rgba(185, 211, 255, 0.7);
+  outline-offset: 2px;
+}
+.piece[aria-grabbed="true"] {
+  cursor: grabbing;
+  background: #fffef7;
+  transform: scale(1.04);
+}
+.piece.correct {
+  animation: pop 0.28s ease;
+  border-color: var(--ok);
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.92);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* === cartoon-style status bar === */
+.statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 0.7rem 1rem;
+  background: #fff7e8;
+  border-top: 2px solid #2e2e2e;
+  box-shadow: 0 -2px 0 #2e2e2e;
+  font-family: "Comic Neue", "Poppins", ui-rounded, sans-serif;
+}
+
+/* each meter is a little "sticker strip" */
+.meter {
+  flex: 1 1 18%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  border: 2px solid #2e2e2e;
+  border-radius: 12px;
+  background: #fffdf7;
+  box-shadow: 0 2px 0 #2e2e2e;
+  transition: transform 0.15s ease;
+}
+
+/*.meter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 #2e2e2e;
+}*/
+
+.meter .label {
+  font-weight: 700;
+  color: #2e2e2e;
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+/* progress track looks like a cartoon bar */
+.meter .track {
+  width: 90%;
+  height: 14px;
+  border-radius: 999px;
+  background: #f2e6cc;
+  border: 2px solid #2e2e2e;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.1);
+}
+
+.meter .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  border-right: 2px solid #2e2e2e;
+  background: linear-gradient(90deg, #b9d6ff, #b6f0b6, #ffd6d6);
+  transition: width 0.4s cubic-bezier(0.3, 1.5, 0.6, 1);
+}
+
+/* animated "pop" when filling */
+.meter .fill:after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  opacity: 0;
+  animation: shine 1s ease-in-out infinite;
+}
+@keyframes shine {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.4; }
+}
+
+.meter .value {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  color: #444;
+}
+
+/* responsive stacking for small screens */
+@media (max-width: 700px) {
+  .statusbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .meter {
+    flex: none;
+    width: 100%;
+  }
+}
+
+
+/* buttons */
+.btn {
+  appearance: none;
+  cursor: pointer;
+  border: 2px solid #2e2e2e; /* hand-drawn style border */
+  border-radius: 14px;
+  background: #fff7e8;
+  color: #2e2e2e;
+  font-family: "Comic Neue", "Poppins", ui-rounded, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  padding: 0.5rem 1rem;
+  position: relative;
+  transition: transform 0.1s ease, background 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 0 #2e2e2e;
+}
+
+.btn:hover {
+  background: #ffeabf;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 #2e2e2e;
+}
+
+.btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 0 #2e2e2e;
+}
+
+/* main accent (Next) */
+.btn.primary {
+  background: #b9d6ff;
+  border-color: #1e40af;
+  box-shadow: 0 2px 0 #1e40af;
+  color: #1e3a8a;
+}
+
+.btn.primary:hover {
+  background: #a7c9ff;
+  box-shadow: 0 4px 0 #1e40af;
+}
+
+.btn.primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #1e40af;
+}
+
+/* reset button - green pastel */
+#btnReset {
+  background: #d3f8d3;
+  border-color: #215b22;
+  color: #1d4d20;
+  box-shadow: 0 2px 0 #215b22;
+}
+#btnReset:hover {
+  background: #c3f2c3;
+  box-shadow: 0 4px 0 #215b22;
+}
+
+/* mute button - red pastel */
+#btnMute {
+  background: #ffd8d8;
+  border-color: #7b2222;
+  color: #7b2222;
+  box-shadow: 0 2px 0 #7b2222;
+}
+#btnMute:hover {
+  background: #ffc9c9;
+  box-shadow: 0 4px 0 #7b2222;
+}
+
+/* subtle cartoon wobble animation */
+@keyframes buttonWobble {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-1deg) scale(1.02);
+  }
+  75% {
+    transform: rotate(1deg) scale(1.02);
+  }
+}
+.btn:hover {
+  animation: buttonWobble 0.25s ease-in-out;
+}
+
+/* disabled state */
+.btn[disabled] {
+  opacity: 0.5;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* responsive: stack meters under stage on small screens */
+@media (max-width: 900px) {
+  body {
+    grid-template-rows: auto auto 1fr auto;
+  }
+}

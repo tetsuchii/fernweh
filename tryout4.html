@@ -2,14 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>fernweh</title>
+    <title>Heritage Mixer – Scrapbook Edition</title>
 
     <style>
       /* -------------------------------------------------------------
        GLOBAL STYLE — SCRAPBOOK THEME
     ------------------------------------------------------------- */
-      @import url("https://fonts.googleapis.com/css2?family=Playwrite+CZ:wght@100..400&display=swap");
-      @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playwrite+CZ:wght@100..400&display=swap");
 
       * {
         box-sizing: border-box;
@@ -25,217 +23,6 @@
         display: flex;
         justify-content: center;
         align-items: stretch;
-      }
-
-      /* ---------------------------------------------------------
-   START SCREEN (fullscreen overlay)
---------------------------------------------------------- */
-
-      #start-screen {
-        position: fixed;
-        inset: 0;
-        background: #f7efe7 url("backgrounds/desk2.png") no-repeat;
-        background-size: cover;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999; /* above everything */
-      }
-
-      #start-inner {
-        padding: 40px 60px;
-        border-radius: 100px;
-        text-align: center;
-        backdrop-filter: blur(1px);
-      }
-
-      #start-inner h1 {
-        font-size: 5rem;
-        color: #6b4e3c;
-        margin-bottom: 50px;
-        font-family: "Playwrite CZ", cursive;
-      }
-
-      #start-inner p {
-        font-size: 1rem;
-        color: #826755;
-        width: 700px;
-        text-align: center;
-        margin-bottom: 50px;
-      }
-
-      #start-btn {
-        font-size: 1.2rem;
-        padding: 12px 28px;
-        border-radius: 999px;
-        border: none;
-        background: #7f9d86;
-        color: #fffaf5;
-        cursor: pointer;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        transition: 0.2s;
-      }
-
-      #start-btn:hover {
-        background: #6f8c77;
-        transform: translateY(-2px);
-      }
-
-      #floating-words {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        overflow: hidden;
-        z-index: -1;
-      }
-
-      #floating-words span {
-        position: absolute;
-        font-size: 1.2rem;
-        opacity: 0.15;
-        color: #4d3a30;
-        font-family: "Montserrat", sans-serif;
-        animation: drift 12s infinite ease-in-out alternate;
-      }
-
-      /* random positions */
-      #floating-words span:nth-child(1) {
-        top: 8%;
-        left: 12%;
-        animation-duration: 11s;
-      }
-      #floating-words span:nth-child(2) {
-        top: 12%;
-        left: 78%;
-        animation-duration: 15s;
-      }
-      #floating-words span:nth-child(3) {
-        top: 25%;
-        left: 10%;
-        animation-duration: 12s;
-      }
-      #floating-words span:nth-child(4) {
-        top: 20%;
-        left: 82%;
-        animation-duration: 16s;
-      }
-      #floating-words span:nth-child(5) {
-        top: 5%;
-        left: 60%;
-        animation-duration: 13s;
-      }
-
-      #floating-words span:nth-child(6) {
-        top: 75%;
-        left: 8%;
-        animation-duration: 17s;
-      }
-      #floating-words span:nth-child(7) {
-        top: 82%;
-        left: 30%;
-        animation-duration: 14s;
-      }
-      #floating-words span:nth-child(8) {
-        top: 78%;
-        left: 70%;
-        animation-duration: 18s;
-      }
-      #floating-words span:nth-child(9) {
-        top: 68%;
-        left: 88%;
-        animation-duration: 13s;
-      }
-      #floating-words span:nth-child(10) {
-        top: 85%;
-        left: 50%;
-        animation-duration: 19s;
-      }
-
-      #floating-words span:nth-child(11) {
-        top: 40%;
-        left: 5%;
-        animation-duration: 10s;
-      }
-      #floating-words span:nth-child(12) {
-        top: 60%;
-        left: 92%;
-        animation-duration: 17s;
-      }
-      #floating-words span:nth-child(13) {
-        top: 15%;
-        left: 45%;
-        animation-duration: 14s;
-      } /* near top but not center */
-      #floating-words span:nth-child(14) {
-        top: 88%;
-        left: 20%;
-        animation-duration: 13s;
-      }
-      #floating-words span:nth-child(15) {
-        top: 88%;
-        left: 80%;
-        animation-duration: 15s;
-      }
-
-      @keyframes drift {
-        0% {
-          transform: translateY(0px) translateX(0px);
-        }
-        100% {
-          transform: translateY(-20px) translateX(10px);
-        }
-      }
-
-      /* ---------------------------------------------------------
-   NARRATIVE SCREEN BETWEEN LEVELS
---------------------------------------------------------- */
-
-      #narrative-screen {
-        position: fixed;
-        inset: 0;
-        background: rgba(39, 38, 37, 0.96);
-        backdrop-filter: blur(4px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9998; /* just under start screen, above UI */
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s ease;
-      }
-
-      #narrative-screen.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      #narrative-inner {
-        padding: 60px 80px;
-        border-radius: 22px;
-        text-align: center;
-      }
-
-      #narrative-text {
-        font-size: 1.4rem;
-        color: #f2efe3;
-        margin-bottom: 40px;
-        line-height: 1.5;
-      }
-
-      #narrative-btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-        border-radius: 999px;
-        border: none;
-        background: #946c3b;
-        color: #fff;
-        cursor: pointer;
-        transition: transform 0.15s ease, background 0.15s ease;
-      }
-
-      #narrative-btn:hover {
-        transform: translateY(-2px);
-        background: #7b5235;
       }
 
       /* -------------------------------------------------------------
@@ -356,67 +143,6 @@
         text-align: center;
       }
 
-      #panel-toggle {
-        width: 100%;
-        padding: 12px 15px;
-        font-size: 0.8rem;
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 10px;
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-        border: 0px;
-        cursor: pointer;
-        margin-bottom: 6px;
-        color: #6b4e3c;
-        backdrop-filter: blur(4px);
-        transition: background 0.15s ease;
-        text-align: left;
-      }
-
-      #panel-toggle:hover {
-        background: rgba(255, 255, 255, 0.9);
-      }
-
-      /* PANEL CLOSED STATE */
-      /* CLOSED STATE -------------------------------------------------- */
-
-      #left-panel.closed {
-        width: 50px !important;
-        min-width: 50px !important;
-
-        /* Remove background & border */
-        background: transparent !important;
-        border: none !important;
-        border-radius: 0 !important;
-
-        /* SHRINK TO FIT THE TOGGLE BUTTON */
-        height: auto !important;
-        max-height: none !important;
-        padding: 5 !important;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        overflow: visible !important;
-      }
-
-      /* Hide draggables + title in closed mode */
-      #left-panel.closed #draggables,
-      #left-panel.closed #left-panel-title {
-        display: none !important;
-      }
-
-      /* Toggle button stays visible and centered */
-      #left-panel.closed #panel-toggle {
-        width: 42px;
-        border-radius: 12px;
-        margin: 6px auto;
-        text-align: center;
-        font-size: 0.75rem;
-        padding: 6px 4px;
-      }
-
       /* -------------------------------------------------------------
    DRAGGABLE ITEMS — FIXED SIZES
 ------------------------------------------------------------- */
@@ -480,9 +206,9 @@
         position: absolute;
         min-width: 60px;
         min-height: 300px;
-        /*border: 2px dashed rgba(80, 60, 40, 0.03);*/
+        border: 2px dashed rgba(80, 60, 40, 0.6);
         border-radius: 10px;
-        background: rgba(255, 250, 245, 0.1);
+        background: rgba(255, 250, 245, 0.25);
         pointer-events: auto;
         transition: background 0.15s ease, transform 0.15s ease;
         z-index: 21;
@@ -511,16 +237,8 @@
       }
 
       .dropzone.dropping {
-        background: rgba(255, 250, 240, 0.2);
+        background: rgba(255, 250, 240, 0.8);
         transform: scale(1.05);
-      }
-
-      /* Only Level 2 dropzones align items to bottom */
-      .dropzone.bottom-align {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
       }
 
       /* -------------------------------------------------------------
@@ -565,7 +283,7 @@
 
       #heritage-footer {
         background: rgba(255, 250, 245, 0.95);
-        padding: 10px 24px;
+        padding: 5px 24px;
         border-top: 3px dashed rgba(140, 110, 90, 0.4);
         backdrop-filter: blur(4px);
         box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.12);
@@ -575,9 +293,10 @@
       #heritage-bar-wrapper {
         width: 100%;
         height: 38px;
-        border-radius: 99px;
+        border-radius: 14px;
         overflow: hidden;
         background: #f5e6d6;
+        border: 2px dashed rgba(150, 120, 100, 0.35);
         position: relative;
         margin-bottom: 10px;
       }
@@ -595,7 +314,7 @@
         gap: 10px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 5px;
+        margin-top: 10px;
       }
 
       /* pastel pill legend */
@@ -636,7 +355,7 @@
       /* -------------------------------------------------------------
        SAFARI IOS FIXES FOR DRAGGABLES
     ------------------------------------------------------------- */
-      @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      @media screen and (-webkit-min-device-pixel-ratio:0) {
         #draggables {
           min-height: 0;
           min-width: 0;
@@ -666,41 +385,6 @@
     </style>
   </head>
   <body>
-    <!-- Start screen -->
-    <div id="start-screen">
-      <div id="floating-words">
-        <span>magyar</span>
-        <span>музыка</span>
-        <span>дом</span>
-        <span>mare</span>
-        <span>sercli</span>
-        <span>cviling</span>
-        <span>dolce</span>
-        <span>lapitó</span>
-        <span>чай</span>
-        <span>csihán</span>
-        <span>gamat</span>
-        <span>smirgli</span>
-        <span>szalmapityóka</span>
-        <span>ба́бушка</span>
-      </div>
-      <div id="start-inner">
-        <h1>fernweh</h1>
-        <p>
-          If heritage is about identity and identity is self-defined today, how
-          is heritage shaped in this international environment?
-        </p>
-        <button id="start-btn">Play →</button>
-      </div>
-    </div>
-
-    <div id="narrative-screen">
-      <div id="narrative-inner">
-        <p id="narrative-text"></p>
-        <button id="narrative-btn">Continue →</button>
-      </div>
-    </div>
-
     <!-- Background Layers -->
     <div id="tree-bg"></div>
     <div id="paper-grain"></div>
@@ -716,7 +400,7 @@
         <section id="board">
           <!-- Left Panel -->
           <div id="left-panel">
-            <button id="panel-toggle">⮜ Memories</button>
+            <div id="left-panel-title">Memories</div>
             <div id="draggables"></div>
           </div>
         </section>
@@ -743,8 +427,8 @@
 
     <script>
       /* -------------------------------------------------------------
-             JAVASCRIPT (CLEAN, REWRITTEN)
-          ------------------------------------------------------------- */
+       JAVASCRIPT (CLEAN, REWRITTEN)
+    ------------------------------------------------------------- */
 
       /* === Heritage Definitions === */
       const HERITAGES = [
@@ -774,11 +458,6 @@
             { id: "e2", image: "assets/vhs-lion.png", heritage: "global" },
             { id: "e3", image: "assets/vhs-szaffi.png", heritage: "hungarian" },
             { id: "e4", image: "assets/vhs-winnie.png", heritage: "global" },
-            {
-              id: "e5",
-              image: "assets/vhs-macskafogo.png",
-              heritage: "hungarian",
-            },
           ],
           dropzones: [{ id: "vhsZone", xLeft: 18, y: 32 }],
         },
@@ -786,46 +465,32 @@
         {
           id: 2,
           background: "backgrounds/bar.png",
+          type: "froccs",
           maxPerZone: 1,
           elements: [
-            { id: "wineBottle", image: "assets/wine.png" },
+            { id: "wineBottle", image: "assets/wine_bottle.png" },
             { id: "measurer", image: "assets/measurer_empty.png" },
             { id: "glass", image: "assets/glass_empty.png" },
-            { id: "soda", image: "assets/soda.png" },
+            { id: "soda", image: "assets/sodabottle.png" },
           ],
           dropzones: [
-            { id: "dzBottle", x: 30, y: 62 },
-            { id: "dzMeasurer", x: 50, y: 62 },
-            { id: "dzGlass", x: 70, y: 62 },
+            { id: "dzBottle", x: 30, y: 65 },
+            { id: "dzMeasurer", x: 50, y: 65 },
+            { id: "dzGlass", x: 70, y: 65 },
           ],
         },
 
         /* Remaining levels unchanged — add yours back here exactly as before. */
       ];
-      /* Narratives between levels */
-
-      const NARRATIVE = {
-        0: "Heritage is the stories we grow up with, shaping how we see the world and ourself in it.",
-        1: "Some memories sit next to each other like tapes on an old shelf…",
-        2: "Life’s small rituals—like mixing a drink—carry heritage too.",
-        3: "Stories change shape depending on where they come from…",
-        4: "Music echoes through generations, changing but never disappearing.",
-        5: "Homes decorate themselves with memories of the people inside.",
-        6: "School days mark us with discipline, laughter, and winter walks.",
-        7: "Holidays whisper ancient traditions into the present.",
-        8: "Every neighbourhood has its rhythm, its benches, its bakery smell.",
-        9: "Markets carry smells that remind you of places you’ve never been.",
-        10: "Languages tell the story of where your voice has travelled.",
-        11: "Dreams of home mix all your pasts into your future.",
-      };
 
       let currentLevel = 0;
       let placements = {};
       let zoneContents = {};
+      let froccs = { setup: false, measurerFilled: false, glassFilled: false };
 
       /* -------------------------------------------------------------
-             INITIALIZERS
-          ------------------------------------------------------------- */
+       INITIALIZERS
+    ------------------------------------------------------------- */
       function initBar() {
         const bar = document.getElementById("heritage-bar");
         const legend = document.getElementById("heritage-legend");
@@ -846,9 +511,9 @@
           const item = document.createElement("div");
           item.className = "heritage-legend-item";
           item.innerHTML = `
-            <div class="heritage-color-box" style="background:${h.color}"></div>
-            ${h.label}
-          `;
+      <div class="heritage-color-box" style="background:${h.color}"></div>
+      ${h.label}
+    `;
           legend.appendChild(item);
         });
 
@@ -875,13 +540,43 @@
             pct === 100 &&
             Object.values(heritagePoints).filter((v) => v > 0).length === 1;
 
-          seg.textContent = "";
+          if (pct === 100 || isOnlySegmentWithPoints) {
+            seg.textContent = "";
+          } else {
+            seg.textContent = pct > 7 ? `${h.label} ${pct.toFixed(0)}%` : "";
+          }
         });
       }
 
       /* -------------------------------------------------------------
-             LOAD LEVEL
-          ------------------------------------------------------------- */
+       VHS CHECKER - LEVEL 1 
+    ------------------------------------------------------------- */
+
+      function checkVHSOrder(level) {
+        const zone = document.querySelector(`[data-id="vhsZone"]`);
+        const items = [...zone.querySelectorAll(".draggable")];
+
+        // Not all placed → cannot check yet
+        if (items.length !== level.elements.length) {
+          document.getElementById("next-btn").disabled = true;
+          return;
+        }
+
+        const filenames = items.map((item) => {
+          const img = item.querySelector("img");
+          return img.src.split("/").pop();
+        });
+
+        const sorted = [...filenames].sort((a, b) => a.localeCompare(b));
+
+        const correct = filenames.every((name, i) => name === sorted[i]);
+
+        document.getElementById("next-btn").disabled = !correct;
+      }
+
+      /* -------------------------------------------------------------
+       LOAD LEVEL
+    ------------------------------------------------------------- */
 
       function loadLevel(i) {
         const level = LEVELS[i];
@@ -939,9 +634,6 @@
             dz.style.top = z.y + "%";
             dz.style.transform = "translate(-50%, -50%)";
           }
-          if (level.id === 2) {
-            dz.classList.add("bottom-align");
-          }
 
           dz.addEventListener("dragover", dragOver);
           dz.addEventListener("dragleave", dragLeave);
@@ -954,8 +646,8 @@
       }
 
       /* -------------------------------------------------------------
-             DRAG & DROP
-          ------------------------------------------------------------- */
+       DRAG & DROP
+    ------------------------------------------------------------- */
 
       let draggedId = null;
 
@@ -1006,6 +698,12 @@
         const dzid = this.dataset.id;
         const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
 
+        // froccs special handling
+        if (level.type === "froccs") {
+          handleFroccs(level, el, dzid);
+          return;
+        }
+
         // === LEVEL 1 SPECIAL BEHAVIOUR: ORDERED VHS ===
         if (level.id === 1) {
           // Insert into specific position based on mouse X — reorder enabled!
@@ -1024,9 +722,7 @@
           ordered.forEach((id) => (placements[id] = dzid));
 
           // Check correct alphabetical order
-          if (Object.keys(placements).length >= 1)
-            document.getElementById("next-btn").disabled = false;
-
+          checkVHSOrder(level);
           return;
         }
 
@@ -1044,8 +740,8 @@
       }
 
       /* ============================================================
-         RETURN ITEM TO DRAGGABLE PANEL
-      ============================================================ */
+   RETURN ITEM TO DRAGGABLE PANEL
+============================================================ */
 
       const draggablesPanel = document.getElementById("draggables");
 
@@ -1078,76 +774,92 @@
       });
 
       /* -------------------------------------------------------------
-             SHOW NARRATIVE
-          ------------------------------------------------------------- */
+       FROCCS LOGIC
+    ------------------------------------------------------------- */
 
-      function showNarrative(nextLevelIndex) {
-        console.log("Showing narrative for level", nextLevelIndex);
-        const screen = document.getElementById("narrative-screen");
-        const textEl = document.getElementById("narrative-text");
+      function handleFroccs(level, el, zoneId) {
+        const id = el.dataset.id;
 
-        textEl.textContent = NARRATIVE[nextLevelIndex] || "";
-        screen.classList.add("active");
+        const bottleIn = zoneContents[zoneId] === "wineBottle";
+        const measIn = zoneContents[zoneId] === "measurer";
+        const glassIn = zoneContents[zoneId] === "glass";
 
-        // When player clicks Continue → load next level
-        document.getElementById("narrative-btn").onclick = () => {
-          screen.classList.remove("active");
-          loadLevel(nextLevelIndex);
-        };
+        // Setup phase
+        if (!froccs.setup) {
+          if (level.maxPerZone === 1 && zoneContents[zoneId]) return;
+
+          document
+            .querySelector(`.dropzone[data-id="${zoneId}"]`)
+            .appendChild(el);
+
+          zoneContents[zoneId] = id;
+          placements[id] = zoneId;
+
+          const ids = Object.values(zoneContents);
+          if (
+            ids.includes("wineBottle") &&
+            ids.includes("measurer") &&
+            ids.includes("glass")
+          ) {
+            froccs.setup = true;
+          }
+
+          if (Object.keys(placements).length === level.elements.length)
+            document.getElementById("next-btn").disabled = false;
+
+          return;
+        }
+
+        // Pour bottle -> measurer
+        if (id === "wineBottle" && measIn && !froccs.measurerFilled) {
+          froccs.measurerFilled = true;
+          const img = document.querySelector(`img[src$="measurer_empty.png"]`);
+          img.src = "assets/measurer_1dl.png";
+          return;
+        }
+
+        // Pour measurer -> glass
+        if (
+          id === "measurer" &&
+          glassIn &&
+          froccs.measurerFilled &&
+          !froccs.glassFilled
+        ) {
+          froccs.glassFilled = true;
+          const img = document.querySelector(`img[src$="glass_empty.png"]`);
+          img.src = "assets/glass_with_wine.png";
+          return;
+        }
       }
 
       /* -------------------------------------------------------------
-             NEXT LEVEL
-          ------------------------------------------------------------- */
+       NEXT LEVEL
+    ------------------------------------------------------------- */
 
-      document.getElementById("next-btn").onclick = () => {
+      document.getElementById("next-btn").addEventListener("click", () => {
         const level = LEVELS[currentLevel];
 
-        // --- apply heritage points ---
         Object.entries(placements).forEach(([eid, _]) => {
           const el = level.elements.find((e) => e.id === eid);
           if (!el || !el.heritage) return;
-          if (heritagePoints[el.heritage] !== undefined) {
+
+          if (heritagePoints[el.heritage] !== undefined)
             heritagePoints[el.heritage] += 7;
-          }
         });
 
         updateBar();
 
-        // --- advance level --
-        console.log(currentLevel);
         currentLevel++;
-
-        // if game is over → finish
-        if (currentLevel >= LEVELS.length) {
-          finishGame();
-          return;
-        }
-
-        // --- show narrative (new behaviour) ---
-        showNarrative(currentLevel);
-      };
-
-      /* -------------------------------------------------------------
-             CLOSE ELEMENT_PANEL
-          ------------------------------------------------------------- */
-
-      const panel = document.getElementById("left-panel");
-      const panelToggle = document.getElementById("panel-toggle");
-
-      panelToggle.addEventListener("click", () => {
-        const closed = panel.classList.toggle("closed");
-
-        if (closed) {
-          panelToggle.textContent = "⮞";
+        if (currentLevel < LEVELS.length) {
+          loadLevel(currentLevel);
         } else {
-          panelToggle.textContent = "⮜  Inventory";
+          finishGame();
         }
       });
 
       /* -------------------------------------------------------------
-             END GAME
-          ------------------------------------------------------------- */
+       END GAME
+    ------------------------------------------------------------- */
 
       function finishGame() {
         document.getElementById("draggables").innerHTML = "";
@@ -1170,21 +882,11 @@
       }
 
       /* -------------------------------------------------------------
-             START
-          ------------------------------------------------------------- */
-
-      document.getElementById("start-btn").onclick = () => {
-        const start = document.getElementById("start-screen");
-        start.classList.add("hidden");
-
-        // small delay for fade-out
-        setTimeout(() => {
-          start.style.display = "none";
-          showNarrative(0);
-        }, 400);
-      };
+       START
+    ------------------------------------------------------------- */
 
       initBar();
+      loadLevel(currentLevel);
     </script>
   </body>
 </html>

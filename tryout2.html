@@ -214,6 +214,28 @@
         z-index: 21;
       }
 
+      /* Special horizontal-growing dropzone for Level 1 */
+      #dropzones .dropzone.horizontal-grow {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        min-width: 600px;
+        min-height: 370px;
+        height: auto;
+        padding: 10px;
+
+        width: auto; /* grow horizontally */
+        max-width: none;
+        white-space: nowrap;
+
+        overflow-x: visible;
+        overflow-y: visible;
+      }
+
+      .dropzone.dropzone.horizontal-grow .draggable {
+        width: auto;
+      }
+
       .dropzone.dropping {
         background: rgba(255, 250, 240, 0.8);
         transform: scale(1.05);
@@ -255,67 +277,66 @@
         transform: none;
       }
 
-/* -------------------------------------------------------------
+      /* -------------------------------------------------------------
    HERITAGE FOOTER — SCRAPBOOK PASTEL STYLE
 ------------------------------------------------------------- */
 
-#heritage-footer {
-  background: rgba(255,250,245,0.95);
-  padding: 5px 24px;
-  border-top: 3px dashed rgba(140,110,90,0.4);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 -4px 14px rgba(0,0,0,0.12);
-}
+      #heritage-footer {
+        background: rgba(255, 250, 245, 0.95);
+        padding: 5px 24px;
+        border-top: 3px dashed rgba(140, 110, 90, 0.4);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.12);
+      }
 
-/* WRAPPER */
-#heritage-bar-wrapper {
-  width: 100%;
-  height: 38px;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f5e6d6;
-  border: 2px dashed rgba(150,120,100,0.35);
-  position: relative;
-  margin-bottom: 10px;
-}
+      /* WRAPPER */
+      #heritage-bar-wrapper {
+        width: 100%;
+        height: 38px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #f5e6d6;
+        border: 2px dashed rgba(150, 120, 100, 0.35);
+        position: relative;
+        margin-bottom: 10px;
+      }
 
-/* MAIN BAR */
-#heritage-bar {
-  height: 100%;
-  display: flex;
-  position: relative;
-}
+      /* MAIN BAR */
+      #heritage-bar {
+        height: 100%;
+        display: flex;
+        position: relative;
+      }
 
-/* LEGEND */
-#heritage-legend {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
+      /* LEGEND */
+      #heritage-legend {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
 
-/* pastel pill legend */
-.heritage-legend-item {
-  background: rgba(255,255,255,0.6);
-  border: 1px dashed rgba(130,110,90,0.4);
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  color: #6b5343;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+      /* pastel pill legend */
+      .heritage-legend-item {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px dashed rgba(130, 110, 90, 0.4);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        color: #6b5343;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
 
-/* little color icon */
-.heritage-color-box {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  border: 1px solid rgba(0,0,0,0.25);
-}
-
+      /* little color icon */
+      .heritage-color-box {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.25);
+      }
 
       /* -------------------------------------------------------------
        FINAL SUMMARY
@@ -362,14 +383,12 @@
       </main>
 
       <footer id="heritage-footer">
+        <div id="heritage-bar-wrapper">
+          <div id="heritage-bar"></div>
+        </div>
 
-  <div id="heritage-bar-wrapper">
-    <div id="heritage-bar"></div>
-  </div>
-
-  <div id="heritage-legend"></div>
-
-</footer>
+        <div id="heritage-legend"></div>
+      </footer>
     </div>
 
     <!-- Dropzones Layer -->
@@ -382,13 +401,12 @@
 
       /* === Heritage Definitions === */
       const HERITAGES = [
-  { key:"hungarian", label:"Hungarian", color:"#d78f88" },
-  { key:"szekely",   label:"Székely",   color:"#8aa9c9" },
-  { key:"italian",   label:"Italian",   color:"#91b497" },
-  { key:"russian",   label:"Russian",   color:"#a892c4" },
-  { key:"svab",      label:"Sváb",      color:"#e4c27a" }
-];
-
+        { key: "hungarian", label: "Hungarian", color: "#d78f88" },
+        { key: "szekely", label: "Székely", color: "#8aa9c9" },
+        { key: "italian", label: "Italian", color: "#91b497" },
+        { key: "russian", label: "Russian", color: "#a892c4" },
+        { key: "svab", label: "Sváb", color: "#e4c27a" },
+      ];
 
       let heritagePoints = {
         hungarian: 100,
@@ -403,19 +421,14 @@
         {
           id: 1,
           background: "backgrounds/shelf.png",
-          maxPerZone: 1,
+          maxPerZone: Infinity,
           elements: [
             { id: "e1", image: "assets/vhs-no.png", heritage: "russian" },
             { id: "e2", image: "assets/vhs-lion.png", heritage: "global" },
             { id: "e3", image: "assets/vhs-szaffi.png", heritage: "hungarian" },
             { id: "e4", image: "assets/vhs-winnie.png", heritage: "global" },
           ],
-          dropzones: [
-            { id: "dz1", x: 21, y: 60 },
-            { id: "dz2", x: 26, y: 60 },
-            { id: "dz3", x: 31, y: 60 },
-            { id: "dz4", x: 36, y: 60 },
-          ],
+          dropzones: [{ id: "vhsZone", xLeft: 18, y: 32 }],
         },
 
         {
@@ -447,61 +460,88 @@
       /* -------------------------------------------------------------
        INITIALIZERS
     ------------------------------------------------------------- */
-function initBar() {
-  const bar = document.getElementById("heritage-bar");
-  const legend = document.getElementById("heritage-legend");
+      function initBar() {
+        const bar = document.getElementById("heritage-bar");
+        const legend = document.getElementById("heritage-legend");
 
-  bar.innerHTML = "";
-  legend.innerHTML = "";
+        bar.innerHTML = "";
+        legend.innerHTML = "";
 
-  HERITAGES.forEach(h => {
-    // segment
-    const seg = document.createElement("div");
-    seg.className = "heritage-segment";
-    seg.dataset.key = h.key;
-    seg.style.background = h.color;
-    seg.style.width = "0%"; // animate from 0
-    bar.appendChild(seg);
+        HERITAGES.forEach((h) => {
+          // segment
+          const seg = document.createElement("div");
+          seg.className = "heritage-segment";
+          seg.dataset.key = h.key;
+          seg.style.background = h.color;
+          seg.style.width = "0%"; // animate from 0
+          bar.appendChild(seg);
 
-    // legend pill
-    const item = document.createElement("div");
-    item.className = "heritage-legend-item";
-    item.innerHTML = `
+          // legend pill
+          const item = document.createElement("div");
+          item.className = "heritage-legend-item";
+          item.innerHTML = `
       <div class="heritage-color-box" style="background:${h.color}"></div>
       ${h.label}
     `;
-    legend.appendChild(item);
-  });
+          legend.appendChild(item);
+        });
 
-  updateBar();
-}
+        updateBar();
+      }
 
+      function updateBar() {
+        const total =
+          Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
-function updateBar() {
-  const total = Object.values(heritagePoints).reduce((a,b)=>a+b,0) || 1;
+        HERITAGES.forEach((h) => {
+          const seg = document.querySelector(
+            `.heritage-segment[data-key="${h.key}"]`
+          );
+          if (!seg) return;
 
-  HERITAGES.forEach(h => {
-    const seg = document.querySelector(`.heritage-segment[data-key="${h.key}"]`);
-    if (!seg) return;
+          const pct = (heritagePoints[h.key] / total) * 100;
+          seg.style.width = pct + "%";
 
-    const pct = (heritagePoints[h.key] / total) * 100;
-    seg.style.width = pct + "%";
+          // Do NOT show label if:
+          // - it's 100%
+          // - or it's the only segment with points
+          const isOnlySegmentWithPoints =
+            pct === 100 &&
+            Object.values(heritagePoints).filter((v) => v > 0).length === 1;
 
-    // Do NOT show label if:
-    // - it's 100%
-    // - or it's the only segment with points
-    const isOnlySegmentWithPoints =
-      pct === 100 && Object.values(heritagePoints).filter(v => v > 0).length === 1;
+          if (pct === 100 || isOnlySegmentWithPoints) {
+            seg.textContent = "";
+          } else {
+            seg.textContent = pct > 7 ? `${h.label} ${pct.toFixed(0)}%` : "";
+          }
+        });
+      }
 
-    if (pct === 100 || isOnlySegmentWithPoints) {
-      seg.textContent = "";
-    } else {
-      seg.textContent = pct > 7 ? `${h.label} ${pct.toFixed(0)}%` : "";
-    }
-  });
-}
+      /* -------------------------------------------------------------
+       VHS CHECKER - LEVEL 1 
+    ------------------------------------------------------------- */
 
+      function checkVHSOrder(level) {
+        const zone = document.querySelector(`[data-id="vhsZone"]`);
+        const items = [...zone.querySelectorAll(".draggable")];
 
+        // Not all placed → cannot check yet
+        if (items.length !== level.elements.length) {
+          document.getElementById("next-btn").disabled = true;
+          return;
+        }
+
+        const filenames = items.map((item) => {
+          const img = item.querySelector("img");
+          return img.src.split("/").pop();
+        });
+
+        const sorted = [...filenames].sort((a, b) => a.localeCompare(b));
+
+        const correct = filenames.every((name, i) => name === sorted[i]);
+
+        document.getElementById("next-btn").disabled = !correct;
+      }
 
       /* -------------------------------------------------------------
        LOAD LEVEL
@@ -548,10 +588,21 @@ function updateBar() {
           const dz = document.createElement("div");
           dz.className = "dropzone";
           dz.dataset.id = z.id;
+          if (level.id === 1) {
+            dz.classList.add("horizontal-grow");
+          }
 
-          dz.style.left = z.x + "%";
-          dz.style.top = z.y + "%";
-          dz.style.transform = "translate(-50%, -50%)";
+          // Level 1 has a left-anchored dropzone
+          if (level.id === 1 && z.xLeft !== undefined) {
+            dz.style.left = z.xLeft + "%";
+            dz.style.top = z.y + "%";
+            dz.style.transform = "none"; // anchor to left
+          } else {
+            // default centered behavior for all other levels
+            dz.style.left = z.x + "%";
+            dz.style.top = z.y + "%";
+            dz.style.transform = "translate(-50%, -50%)";
+          }
 
           dz.addEventListener("dragover", dragOver);
           dz.addEventListener("dragleave", dragLeave);
@@ -596,6 +647,25 @@ function updateBar() {
           return;
         }
 
+        // === LEVEL 1 SPECIAL BEHAVIOUR: ORDERED VHS ===
+        if (level.id === 1) {
+          this.appendChild(el);
+          el.classList.add("on-board");
+
+          // No single-item limit
+          zoneContents[dzid] = zoneContents[dzid] || [];
+          if (!zoneContents[dzid].includes(draggedId)) {
+            zoneContents[dzid].push(draggedId);
+          }
+
+          placements[draggedId] = dzid;
+
+          // Check alphabetical ordering
+          checkVHSOrder(level);
+          return;
+        }
+
+        // === NORMAL LEVELS ===
         if (level.maxPerZone === 1 && zoneContents[dzid]) return;
 
         this.appendChild(el);

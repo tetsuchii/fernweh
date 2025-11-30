@@ -9,13 +9,12 @@
        GLOBAL STYLE — SCRAPBOOK THEME
     ------------------------------------------------------------- */
       @import url("https://fonts.googleapis.com/css2?family=Playwrite+CZ:wght@100..400&display=swap");
-      @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playwrite+CZ:wght@100..400&display=swap");
-
+      @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+CZ:wght@100..400&display=swap");
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: "Segoe UI", system-ui, sans-serif;
+        font-family: "Nunito", sans-serif;
       }
 
       body {
@@ -25,6 +24,7 @@
         display: flex;
         justify-content: center;
         align-items: stretch;
+        font-family: "Nunito", sans-serif;
       }
 
       /* ---------------------------------------------------------
@@ -34,8 +34,9 @@
       #start-screen {
         position: fixed;
         inset: 0;
-        background: #f7efe7 url("backgrounds/desk2.png") no-repeat;
-        background-size: cover;
+        background: #f7efe7 url("backgrounds/photobook.png") no-repeat;
+        background-size: 120%;
+        background-position: center;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -43,36 +44,37 @@
       }
 
       #start-inner {
-        padding: 40px 60px;
+        padding: 10px 60px;
         border-radius: 100px;
         text-align: center;
-        backdrop-filter: blur(1px);
       }
 
       #start-inner h1 {
         font-size: 5rem;
-        color: #6b4e3c;
-        margin-bottom: 50px;
+        color: #956c52;
+        margin-bottom: 20px;
+        margin-left: 50px;
         font-family: "Playwrite CZ", cursive;
       }
 
       #start-inner p {
         font-size: 1rem;
         color: #826755;
-        width: 700px;
+        width: 400px;
         text-align: center;
-        margin-bottom: 50px;
+        margin-bottom: 10px;
+        margin-left: 45px;
       }
 
       #start-btn {
         font-size: 1.2rem;
-        padding: 12px 28px;
+        padding: 12px 80px;
         border-radius: 999px;
+        margin-left: 45px;
         border: none;
         background: #7f9d86;
         color: #fffaf5;
         cursor: pointer;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
         transition: 0.2s;
       }
 
@@ -87,103 +89,6 @@
         pointer-events: none;
         overflow: hidden;
         z-index: -1;
-      }
-
-      #floating-words span {
-        position: absolute;
-        font-size: 1.2rem;
-        opacity: 0.15;
-        color: #4d3a30;
-        font-family: "Montserrat", sans-serif;
-        animation: drift 12s infinite ease-in-out alternate;
-      }
-
-      /* random positions */
-      #floating-words span:nth-child(1) {
-        top: 8%;
-        left: 12%;
-        animation-duration: 11s;
-      }
-      #floating-words span:nth-child(2) {
-        top: 12%;
-        left: 78%;
-        animation-duration: 15s;
-      }
-      #floating-words span:nth-child(3) {
-        top: 25%;
-        left: 10%;
-        animation-duration: 12s;
-      }
-      #floating-words span:nth-child(4) {
-        top: 20%;
-        left: 82%;
-        animation-duration: 16s;
-      }
-      #floating-words span:nth-child(5) {
-        top: 5%;
-        left: 60%;
-        animation-duration: 13s;
-      }
-
-      #floating-words span:nth-child(6) {
-        top: 75%;
-        left: 8%;
-        animation-duration: 17s;
-      }
-      #floating-words span:nth-child(7) {
-        top: 82%;
-        left: 30%;
-        animation-duration: 14s;
-      }
-      #floating-words span:nth-child(8) {
-        top: 78%;
-        left: 70%;
-        animation-duration: 18s;
-      }
-      #floating-words span:nth-child(9) {
-        top: 68%;
-        left: 88%;
-        animation-duration: 13s;
-      }
-      #floating-words span:nth-child(10) {
-        top: 85%;
-        left: 50%;
-        animation-duration: 19s;
-      }
-
-      #floating-words span:nth-child(11) {
-        top: 40%;
-        left: 5%;
-        animation-duration: 10s;
-      }
-      #floating-words span:nth-child(12) {
-        top: 60%;
-        left: 92%;
-        animation-duration: 17s;
-      }
-      #floating-words span:nth-child(13) {
-        top: 15%;
-        left: 45%;
-        animation-duration: 14s;
-      } /* near top but not center */
-      #floating-words span:nth-child(14) {
-        top: 88%;
-        left: 20%;
-        animation-duration: 13s;
-      }
-      #floating-words span:nth-child(15) {
-        top: 88%;
-        left: 80%;
-        animation-duration: 15s;
-      }
-
-      @keyframes drift {
-        0% {
-          transform: translateY(0px) translateX(0px);
-        }
-        100% {
-          transform: translateY(-20px) translateX(10px);
-        }
       }
 
       /* ---------------------------------------------------------
@@ -238,6 +143,66 @@
         background: #7b5235;
       }
 
+      /* ---------------------------------------------------------
+   MENU SCREEN (after start screen)
+--------------------------------------------------------- */
+      #menu-screen {
+        position: fixed;
+        inset: 0;
+        background: #f7efe7 url("backgrounds/photobook-open.png") no-repeat
+          center;
+        background-size: 140%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+
+      #menu-screen.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #menu-inner {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      #menu-inner h2 {
+        font-size: 2.6rem;
+        color: #956c52;
+        margin-bottom: 30px;
+        font-family: "Playwrite CZ", cursive;
+      }
+
+      #menu-levels {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 900px;
+      }
+
+      .menu-thumb {
+        width: 180px;
+        height: 120px;
+        border-radius: 16px;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .menu-thumb:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        border: #fffaf2 2px solid;
+      }
+
       /* -------------------------------------------------------------
        TREE BACKGROUND LAYER
     ------------------------------------------------------------- */
@@ -245,7 +210,7 @@
       #tree-bg {
         position: fixed;
         inset: 0;
-        background-size: cover;
+        background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
         z-index: 0;
@@ -349,7 +314,7 @@
 
       #left-panel-title {
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 800;
         color: #826755;
         margin-bottom: 8px;
         padding-top: 10px;
@@ -360,6 +325,8 @@
         width: 100%;
         padding: 12px 15px;
         font-size: 0.8rem;
+        font-weight: 600;
+        font-family: "Nunito", sans-serif;
         background: rgba(255, 255, 255, 0.7);
         border-radius: 10px;
         border-bottom-left-radius: 0px;
@@ -444,7 +411,7 @@
       }
 
       .draggable img {
-        width: 60px; /* small in panel */
+        width: 100px; /* small in panel */
         height: fit-content;
         pointer-events: none; /* required! */
         filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
@@ -463,6 +430,34 @@
 
       .on-board:hover {
         transform: scale(1.03);
+      }
+
+      .level5-zone .draggable img {
+        width: 420px !important;
+        height: auto !important;
+        max-width: 0px;
+        max-height: 200px;
+        object-fit: contain;
+        transition: transform 0.2s ease;
+      }
+
+      .level5-zone .draggable:hover img {
+        transform: scale(1.05);
+      }
+
+      /* When an item is dropped into dzPuppet */
+      .in-puppet-zone img {
+        width: 420px !important; /* match size of dzPuppet */
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain;
+        transition: transform 0.25s ease;
+      }
+
+      /* Larger draggables in the panel */
+      .panel-large .draggable img {
+        width: 120px !important; /* make them bigger */
+        height: auto !important;
       }
 
       /* -------------------------------------------------------------
@@ -523,6 +518,88 @@
         align-items: center;
       }
 
+      .level3-zone {
+        width: 380px !important;
+        height: 20px !important;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      /* Make level 3 items bigger when placed on the tree */
+      .level3-zone .draggable img {
+        max-width: 300px;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .level4-zone {
+        width: 420px !important;
+        min-height: 50px !important;
+        max-height: 70px !important;
+        border-radius: 12px;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      /* Level 5 dropzones */
+      .level5-doll {
+        width: 300px !important;
+        min-height: 300px !important;
+        border-radius: 14px;
+      }
+
+      .level5-closet {
+        width: 300px !important;
+        min-height: 600px !important;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column; /* or row depending on layout */
+        gap: 50px; /* adjust spacing here */
+        align-items: center;
+      }
+
+      .level6-trigger-zone {
+        width: 610px !important;
+        height: 540px !important;
+        border-radius: 3000px;
+      }
+
+      .level7-iconzone {
+        width: 120px !important;
+        height: 120px !important;
+        min-width: 100px !important; /* ← override global */
+        min-height: 100px !important; /* ← override global */
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: visible;
+      }
+
+      /* Level 8 — special square dropzone */
+      .level8-square {
+        width: 180px !important;
+        height: 180px !important;
+        min-width: 180px !important;
+        min-height: 180px !important;
+        background: rgba(230, 230, 230, 0.18);
+        border-radius: 2000px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Make placed items fill the Level 8 dropzones */
+      .level8-square .draggable img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain; /* prevents distortion */
+      }
       /* -------------------------------------------------------------
        CONTROLS
     ------------------------------------------------------------- */
@@ -619,6 +696,12 @@
         border: 1px solid rgba(0, 0, 0, 0.25);
       }
 
+      .heritage-segment {
+        height: 100%;
+        display: block;
+        transition: width 0.4s ease;
+      }
+
       /* -------------------------------------------------------------
        FINAL SUMMARY
     ------------------------------------------------------------- */
@@ -663,34 +746,46 @@
           width: 90px;
         }
       }
+
+      #draggables.panel-large .draggable img {
+        width: 140px !important;
+      }
+
+      .panel-large .draggable img {
+        width: 120px !important;
+        height: auto !important;
+      }
+
+      #draggables.panel-large {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+
+      .heritage-segment[data-key="global"] {
+        background-image: repeating-linear-gradient(
+          45deg,
+          #e8d5c4 0 12px,
+          /* warm beige */ #c7d9d4 12px 24px,
+          /* sage pastel */ #d9cce3 24px 36px,
+          /* muted lavender */ #f4e3cd 36px 48px,
+          /* creamy tan */ #cfd8e8 48px 60px,
+          /* soft dusty blue */ #ead6e0 60px 72px /* powdered rose */
+        );
+      }
+
+
+      /* ----------------------------New ideas--------------------------------- */
+      
+      
     </style>
   </head>
   <body>
     <!-- Start screen -->
     <div id="start-screen">
-      <div id="floating-words">
-        <span>magyar</span>
-        <span>музыка</span>
-        <span>дом</span>
-        <span>mare</span>
-        <span>sercli</span>
-        <span>cviling</span>
-        <span>dolce</span>
-        <span>lapitó</span>
-        <span>чай</span>
-        <span>csihán</span>
-        <span>gamat</span>
-        <span>smirgli</span>
-        <span>szalmapityóka</span>
-        <span>ба́бушка</span>
-      </div>
       <div id="start-inner">
         <h1>fernweh</h1>
-        <p>
-          If heritage is about identity and identity is self-defined today, how
-          is heritage shaped in this international environment?
-        </p>
-        <button id="start-btn">Play →</button>
+
+        <button id="start-btn">Play</button>
+        <p><br /><br /><br /><br /></p>
       </div>
     </div>
 
@@ -698,6 +793,13 @@
       <div id="narrative-inner">
         <p id="narrative-text"></p>
         <button id="narrative-btn">Continue →</button>
+      </div>
+    </div>
+
+    <div id="menu-screen">
+      <div id="menu-inner">
+        <h2>Select a Memory</h2>
+        <div id="menu-levels"></div>
       </div>
     </div>
 
@@ -716,7 +818,7 @@
         <section id="board">
           <!-- Left Panel -->
           <div id="left-panel">
-            <button id="panel-toggle">⮜ Memories</button>
+            <button id="panel-toggle">☰ Memories</button>
             <div id="draggables"></div>
           </div>
         </section>
@@ -743,8 +845,8 @@
 
     <script>
       /* -------------------------------------------------------------
-             JAVASCRIPT (CLEAN, REWRITTEN)
-          ------------------------------------------------------------- */
+                       JAVASCRIPT (CLEAN, REWRITTEN)
+      ------------------------------------------------------------- */
 
       /* === Heritage Definitions === */
       const HERITAGES = [
@@ -753,20 +855,38 @@
         { key: "italian", label: "Italian", color: "#91b497" },
         { key: "russian", label: "Russian", color: "#a892c4" },
         { key: "svab", label: "Sváb", color: "#e4c27a" },
+        {
+          key: "global",
+          label: "Global",
+          color: "#ccc",
+        },
       ];
 
       let heritagePoints = {
-        hungarian: 100,
+        hungarian: 0,
         szekely: 0,
         italian: 0,
         russian: 0,
         svab: 0,
+        global: 0,
       };
 
       /* === Levels === */
       const LEVELS = [
         {
           id: 1,
+          background: "backgrounds/birth_cert.png",
+          maxPerZone: Infinity,
+          elements: [
+            { id: "anna", image: "assets/anna.png", heritage: "hungarian" },
+            { id: "nina", image: "assets/nina.png", heritage: "russian" },
+            { id: "toro", image: "assets/toro.png", heritage: "hungarian" },
+          ],
+          dropzones: [{ id: "dzAnna", x: 57, y: 44 }],
+        },
+
+        {
+          id: 2,
           background: "backgrounds/shelf.png",
           maxPerZone: Infinity,
           elements: [
@@ -784,25 +904,137 @@
         },
 
         {
-          id: 2,
+          id: 3,
+          background: "backgrounds/christmas_tree.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "betlehem",
+              image: "assets/betlehem.png",
+              heritage: "hungarian",
+            },
+            {
+              id: "dedmoroz",
+              image: "assets/dedmoroz.png",
+              heritage: "russian",
+            },
+          ],
+          dropzones: [
+            { id: "dzBetlehem", x: 30, y: 62 },
+            { id: "dzDedmoroz", x: 80, y: 62 },
+          ],
+        },
+
+        {
+          id: 4,
           background: "backgrounds/bar.png",
           maxPerZone: 1,
           elements: [
             { id: "wineBottle", image: "assets/wine.png" },
-            { id: "measurer", image: "assets/measurer_empty.png" },
-            { id: "glass", image: "assets/glass_empty.png" },
+            {
+              id: "glass",
+              image: "assets/glass-empty.png",
+              allowMultiple: true,
+            },
             { id: "soda", image: "assets/soda.png" },
           ],
           dropzones: [
             { id: "dzBottle", x: 30, y: 62 },
-            { id: "dzMeasurer", x: 50, y: 62 },
-            { id: "dzGlass", x: 70, y: 62 },
+            { id: "dzGlass", x: 50, y: 62 },
+            { id: "dzSoda", x: 70, y: 62 },
           ],
         },
+        {
+          id: 5,
+          background: "backgrounds/closet.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "hunCloth",
+              image: "assets/hungarian-folkclothing.png",
+              heritage: "hungarian",
+            },
+            {
+              id: "svabCloth",
+              image: "assets/svab-folkclothing.png",
+              heritage: "svab",
+            },
+          ],
+          dropzones: [
+            { id: "dzPuppet", x: 31.5, y: 56 },
+            { id: "dzCloset", x: 69, y: 52 },
+          ],
+        },
+        {
+          id: 6,
+          background: "backgrounds/pizza-on-table.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "knife", image: "assets/knife.png", heritage: "global" },
+            {
+              id: "pizzaCutter",
+              image: "assets/pizza-cutter.png",
+              heritage: "hungarian",
+            },
+            { id: "scissor", image: "assets/scissor.png", heritage: "italian" },
+          ],
+          dropzones: [{ id: "dzTrigger", x: 54, y: 42 }],
+        },
+        {
+          id: 7,
+          background: "backgrounds/garden.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "panda", image: "assets/panda-icon.png", heritage: "global" },
+            {
+              id: "bear",
+              image: "assets/bear-icon.png",
+              heritage: "szekely",
+            },
+            {
+              id: "wolt",
+              image: "assets/wolt-icon.png",
+              heritage: "hungarian",
+            },
+          ],
+          dropzones: [{ id: "dzIcon", x: 58, y: 24.8 }],
+        },
+        {
+          id: 8,
+          background: "backgrounds/desk3.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "spagetti",
+              image: "assets/spegetti.png",
+              heritage: "italian",
+            },
 
-        /* Remaining levels unchanged — add yours back here exactly as before. */
+            { id: "vineta", image: "assets/vineta.png", heritage: "szekely" },
+            {
+              id: "pelmeni",
+              image: "assets/pelmeni.png",
+              heritage: "russian",
+            },
+            {
+              id: "vinigret",
+              image: "assets/vinigret.png",
+              heritage: "russian",
+            },
+            { id: "mititei", image: "assets/mititei.png", heritage: "szekely" },
+          ],
+          dropzones: [
+            { id: "dzTable1", x: 51, y: 15 },
+            { id: "dzTable2", x: 51, y: 72 },
+            { id: "dzTable3", x: 35.5, y: 48 },
+            { id: "dzTable4", x: 66.6, y: 48 },
+          ],
+        },
       ];
+
       /* Narratives between levels */
+      const PRE_MENU_TEXT =
+        "Every story begins somewhere… before you dive into your memories, open the book and choose where to start.";
 
       const NARRATIVE = {
         0: "Heritage is the stories we grow up with, shaping how we see the world and ourself in it.",
@@ -824,8 +1056,8 @@
       let zoneContents = {};
 
       /* -------------------------------------------------------------
-             INITIALIZERS
-          ------------------------------------------------------------- */
+                       INITIALIZERS
+                    ------------------------------------------------------------- */
       function initBar() {
         const bar = document.getElementById("heritage-bar");
         const legend = document.getElementById("heritage-legend");
@@ -838,7 +1070,9 @@
           const seg = document.createElement("div");
           seg.className = "heritage-segment";
           seg.dataset.key = h.key;
-          seg.style.background = h.color;
+          if (h.key !== "global") {
+            seg.style.background = h.color;
+          }
           seg.style.width = "0%"; // animate from 0
           bar.appendChild(seg);
 
@@ -846,16 +1080,39 @@
           const item = document.createElement("div");
           item.className = "heritage-legend-item";
           item.innerHTML = `
-            <div class="heritage-color-box" style="background:${h.color}"></div>
-            ${h.label}
-          `;
+                      <div class="heritage-color-box" style="background:${h.color}"></div>
+                      ${h.label}
+                    `;
           legend.appendChild(item);
         });
 
         updateBar();
       }
 
+      function applyHeritagePointsForLevel(level) {
+        // Loop through all placed items
+        for (const itemId in placements) {
+          const dz = placements[itemId];
+          if (!dz) continue; // item not placed
+
+          // Get the draggable element
+          const el = document.querySelector(`.draggable[data-id="${itemId}"]`);
+          if (!el) continue;
+
+          const heritage = el.dataset.heritage;
+
+          // Skip global items or items without heritage
+          if (!heritage) continue;
+
+          // Award points
+          if (heritagePoints.hasOwnProperty(heritage)) {
+            heritagePoints[heritage] += 1; // adjust scale if needed
+          }
+        }
+      }
+
       function updateBar() {
+        console.log("heritagePoints:", heritagePoints);
         const total =
           Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
@@ -879,8 +1136,55 @@
         });
       }
 
+      function buildMenu() {
+        const wrap = document.getElementById("menu-levels");
+        wrap.innerHTML = "";
+
+        LEVELS.forEach((lvl, index) => {
+          const thumb = document.createElement("div");
+          thumb.className = "menu-thumb";
+          thumb.style.backgroundImage = `url(${lvl.background})`;
+
+          thumb.onclick = () => {
+            startLevelFromMenu(index);
+          };
+
+          wrap.appendChild(thumb);
+        });
+      }
+
+      function showMenu() {
+        buildMenu();
+        document.getElementById("menu-screen").classList.add("active");
+      }
+
+      function startLevelFromMenu(levelIndex) {
+        currentLevel = levelIndex;
+
+        document.getElementById("menu-screen").classList.remove("active");
+
+        // Option A: show narrative before level
+        showNarrative(levelIndex);
+
+        // Option B (skip narrative):
+        // loadLevel(levelIndex);
+      }
+
+      function showPreMenuNarrative() {
+        const screen = document.getElementById("narrative-screen");
+        const textEl = document.getElementById("narrative-text");
+
+        textEl.textContent = PRE_MENU_TEXT;
+        screen.classList.add("active");
+
+        document.getElementById("narrative-btn").onclick = () => {
+          screen.classList.remove("active");
+          showMenu(); // ✨ then go to the menu
+        };
+      }
+
       /* -------------------------------------------------------------
-             LOAD LEVEL
+                       LOAD LEVEL
           ------------------------------------------------------------- */
 
       function loadLevel(i) {
@@ -899,6 +1203,14 @@
         /* Draggables */
         const dwrap = document.getElementById("draggables");
         dwrap.innerHTML = "";
+
+        // Make draggables larger only for levels 1, 4, 5, 6
+        const panel = document.getElementById("draggables");
+        panel.classList.remove("panel-large"); // reset first
+
+        if ([1, 3, 5, 6, 7, 8].includes(level.id)) {
+          panel.classList.add("panel-large");
+        }
 
         level.elements.forEach((el) => {
           const d = document.createElement("div");
@@ -924,12 +1236,28 @@
           const dz = document.createElement("div");
           dz.className = "dropzone";
           dz.dataset.id = z.id;
-          if (level.id === 1) {
+          //VHS shelf level
+          if (level.id === 2) {
             dz.classList.add("horizontal-grow");
           }
 
-          // Level 1 has a left-anchored dropzone
-          if (level.id === 1 && z.xLeft !== undefined) {
+          if (level.id === 3) {
+            dz.classList.add("level3-zone");
+          }
+
+          if (level.id === 1) {
+            dz.classList.add("level4-zone");
+          }
+
+          // LEVEL 7 — special icon dropzone
+          if (level.id === 7) {
+            if (z.id === "dzIcon") {
+              dz.classList.add("level7-iconzone");
+            }
+          }
+
+          // level 2 has a left-anchored dropzone (VHS shelf)
+          if (level.id === 2 && z.xLeft !== undefined) {
             dz.style.left = z.xLeft + "%";
             dz.style.top = z.y + "%";
             dz.style.transform = "none"; // anchor to left
@@ -939,8 +1267,37 @@
             dz.style.top = z.y + "%";
             dz.style.transform = "translate(-50%, -50%)";
           }
-          if (level.id === 2) {
+
+          //BAR level
+          if (level.id === 4) {
             dz.classList.add("bottom-align");
+          }
+
+          if (level.id === 5) {
+            if (z.id === "dzCloset") {
+              dz.classList.add("level5-closet"); // bigger dropzone
+            }
+            if (z.id === "dzPuppet") {
+              dz.classList.add("level5-doll"); // smaller dropzone
+            }
+          }
+
+          if (level.id === 6) {
+            if (z.id === "dzTrigger") {
+              dz.classList.add("level6-trigger-zone");
+            }
+          }
+
+          // LEVEL 8 — special square dropzones
+          if (level.id === 8) {
+            if (
+              z.id === "dzTable1" ||
+              z.id === "dzTable2" ||
+              z.id === "dzTable3" ||
+              z.id === "dzTable4"
+            ) {
+              dz.classList.add("level8-square");
+            }
           }
 
           dz.addEventListener("dragover", dragOver);
@@ -954,8 +1311,8 @@
       }
 
       /* -------------------------------------------------------------
-             DRAG & DROP
-          ------------------------------------------------------------- */
+                       DRAG & DROP
+                    ------------------------------------------------------------- */
 
       let draggedId = null;
 
@@ -998,54 +1355,362 @@
         container.appendChild(draggedEl);
       }
 
+      function zoneHas(zoneId, itemId) {
+        return zoneContents[zoneId] && zoneContents[zoneId].includes(itemId);
+      }
+
+      function applyFoldedVersion(itemEl) {
+        const id = itemEl.dataset.id;
+        const img = itemEl.querySelector("img");
+        if (!img) return;
+
+        if (id === "hunCloth") {
+          img.src = "assets/hun-cloth-folded.png";
+        } else if (id === "svabCloth") {
+          img.src = "assets/svab-cloth-folded.png";
+        }
+      }
+
+      function applyUnfoldedVersion(itemEl) {
+        const id = itemEl.dataset.id;
+        const img = itemEl.querySelector("img");
+        if (!img) return;
+
+        if (id === "hunCloth") {
+          img.src = "assets/hungarian-folkclothing.png";
+        } else if (id === "svabCloth") {
+          img.src = "assets/svab-folkclothing.png";
+        }
+      }
+
       function dropItem(ev) {
         ev.preventDefault();
         this.classList.remove("dropping");
 
-        const level = LEVELS[currentLevel];
+        // --- ALWAYS clean previous zone bookkeeping ---
         const dzid = this.dataset.id;
+        const level = LEVELS[currentLevel];
+
+        const oldZone = placements[draggedId];
+        if (oldZone && oldZone !== dzid) {
+          if (zoneContents[oldZone]) {
+            zoneContents[oldZone] = zoneContents[oldZone].filter(
+              (id) => id !== draggedId
+            );
+          }
+        }
+
         const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
 
-        // === LEVEL 1 SPECIAL BEHAVIOUR: ORDERED VHS ===
-        if (level.id === 1) {
-          // Insert into specific position based on mouse X — reorder enabled!
+        // === LEVEL 2 VHS===
+        if (level.id === 2) {
           insertAtPosition(this, el, ev);
-
           el.classList.add("on-board");
-
-          // Rebuild zone contents in correct order
           const ordered = [...this.querySelectorAll(".draggable")].map(
             (d) => d.dataset.id
           );
           zoneContents[dzid] = ordered;
-
-          // Update placement map
           placements = {};
           ordered.forEach((id) => (placements[id] = dzid));
-
-          // Check correct alphabetical order
           if (Object.keys(placements).length >= 1)
             document.getElementById("next-btn").disabled = false;
+          return;
+        }
+
+        // === BAR ===
+        if (level.id === 4) {
+          const dzid = this.dataset.id;
+
+          // Ensure zone contents array exists
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+          const isGlass = draggedId === "glass";
+          const isWine = draggedId === "wineBottle";
+          const isSoda = draggedId === "soda";
+
+          const hasGlass = zoneContents[dzid].includes("glass");
+          const hasWine = zoneContents[dzid].includes("wineBottle");
+          const hasSoda = zoneContents[dzid].includes("soda");
+
+          // ----------------------------------------------------
+          // RULE 1: Glass cannot enter zone with wine or soda
+          // ----------------------------------------------------
+          if (isGlass && (hasWine || hasSoda)) {
+            this.classList.remove("dropping");
+            return; // BLOCK
+          }
+
+          // ----------------------------------------------------
+          // RULE 2-3: Wine <-> Soda cannot mix
+          // ----------------------------------------------------
+          if (isWine && hasSoda) {
+            this.classList.remove("dropping");
+            return; // BLOCK
+          }
+
+          if (isSoda && hasWine) {
+            this.classList.remove("dropping");
+            return; // BLOCK
+          }
+
+          // ----------------------------------------------------
+          // PLACE ITEM IN DROPZONE
+          // ----------------------------------------------------
+          this.appendChild(el);
+          el.classList.add("on-board");
+          zoneContents[dzid].push(draggedId);
+          placements[draggedId] = dzid;
+
+          // ----------------------------------------------------
+          // RULE 4: Froccs mix → update image + eject beverage
+          // Only when glass is already present
+          // ----------------------------------------------------
+          if (hasGlass && (isWine || isSoda)) {
+            applyGlassImageChange(dzid, draggedId);
+            ejectItem(draggedId, dzid);
+          }
+
+          // Enable lock-in if something was placed
+          if (Object.keys(placements).length >= 1) {
+            document.getElementById("next-btn").disabled = false;
+          }
 
           return;
         }
 
-        // === NORMAL LEVELS ===
-        if (level.maxPerZone === 1 && zoneContents[dzid]) return;
+        // === LEVEL 5 ===
+        if (level.id === 5) {
+          const dzid = this.dataset.id;
 
+          // --- DO NOT ALLOW MORE THAN ONE ITEM IN dzPuppet ---
+          if (dzid === "dzPuppet") {
+            if (!zoneContents[dzid]) zoneContents[dzid] = [];
+            if (zoneContents[dzid].length >= 1) {
+              // Block placement
+              this.classList.remove("dropping");
+              return;
+            }
+          }
+
+          // Ensure zone contents array
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+          // Place visually
+          this.appendChild(el);
+          el.classList.add("on-board");
+
+          // --- CLOSET → folded ---
+          if (dzid === "dzCloset") {
+            applyFoldedVersion(el);
+          }
+
+          // --- PUPPET → unfolded ---
+          if (dzid === "dzPuppet") {
+            applyUnfoldedVersion(el);
+            el.classList.add("in-puppet-zone");
+          } else {
+            el.classList.remove("in-puppet-zone");
+          }
+
+          zoneContents[dzid].push(draggedId);
+          placements[draggedId] = dzid;
+
+          document.getElementById("next-btn").disabled = false;
+          return;
+        }
+
+        // === LEVEL 6: special trigger zone ===
+        if (LEVELS[currentLevel].id === 6) {
+          const dzid = this.dataset.id;
+
+          // Only one special dropzone exists
+          if (dzid === "dzTrigger") {
+            const el = document.querySelector(
+              `.draggable[data-id="${draggedId}"]`
+            );
+
+            // --- CHANGE BACKGROUND ---
+            document.getElementById("tree-bg").style.backgroundImage =
+              'url("backgrounds/pizza-cut-on-table.png")';
+            document.getElementById("next-btn").disabled = false;
+
+            // --- Immediately eject element back to panel ---
+            const panel = document.getElementById("draggables");
+            panel.appendChild(el);
+            el.classList.remove("on-board");
+
+            // Clear internal bookkeeping
+            placements[draggedId] = null;
+            zoneContents[dzid] = [];
+
+            this.classList.remove("dropping");
+            return; // stop here, nothing else allowed
+          }
+        }
+
+        // === LEVEL 7 — allow ONLY ONE drop into dzIcon ===
+        if (level.id === 7) {
+          const dzid = this.dataset.id;
+
+          // Only one element allowed inside dzIcon
+          if (dzid === "dzIcon") {
+            if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+            if (zoneContents[dzid].length >= 1) {
+              // Zone already has an item → BLOCK placement
+              this.classList.remove("dropping");
+              return;
+            }
+          }
+        }
+
+        // === LEVEL 8 — Allow only one element; swap if second item is dropped ===
+        if (level.id === 8) {
+          const dzid = this.dataset.id;
+
+          // Ensure array exists
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+          // If zone already has an item, we swap
+          if (zoneContents[dzid].length === 1) {
+            const existingId = zoneContents[dzid][0];
+            const existingEl = document.querySelector(
+              `.draggable[data-id="${existingId}"]`
+            );
+
+            // Swap: move existing element back to original place of the dragged one
+            const previousZoneId = placements[draggedId];
+
+            if (previousZoneId && previousZoneId !== dzid) {
+              const previousZone = document.querySelector(
+                `.dropzone[data-id="${previousZoneId}"]`
+              );
+              if (previousZone) {
+                previousZone.appendChild(existingEl);
+                zoneContents[previousZoneId].push(existingId);
+              }
+            } else {
+              // If dragged item came from panel → send existing item to panel
+              document.getElementById("draggables").appendChild(existingEl);
+            }
+
+            // Update bookkeeping
+            zoneContents[dzid] = [draggedId];
+            placements[existingId] = previousZoneId || null;
+          } else {
+            // Zone empty → add normally
+            zoneContents[dzid].push(draggedId);
+          }
+
+          // Place the dragged element into zone
+          this.appendChild(el);
+          el.classList.add("on-board");
+          placements[draggedId] = dzid;
+
+          document.getElementById("next-btn").disabled = false;
+          return;
+        }
+
+        if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+        // Add element visually
         this.appendChild(el);
         el.classList.add("on-board");
 
-        zoneContents[dzid] = draggedId;
+        // Update tracking
+        zoneContents[dzid].push(draggedId);
         placements[draggedId] = dzid;
 
-        if (Object.keys(placements).length === level.elements.length)
+        if (Object.keys(placements).length >= 1)
           document.getElementById("next-btn").disabled = false;
       }
 
       /* ============================================================
-         RETURN ITEM TO DRAGGABLE PANEL
-      ============================================================ */
+                   FROCCS MAKER
+                ============================================================ */
+      function ejectItem(id, currentZoneId) {
+        const itemEl = document.querySelector(`.draggable[data-id="${id}"]`);
+
+        // Where it was before (panel or dropzone)
+        const previousZoneId = placements[id];
+
+        // Remove from current dropzone's contents
+        zoneContents[currentZoneId] = zoneContents[currentZoneId].filter(
+          (x) => x !== id
+        );
+
+        // Send back to previous dropzone
+        if (previousZoneId && previousZoneId !== currentZoneId) {
+          const prevZone = document.querySelector(
+            `.dropzone[data-id="${previousZoneId}"]`
+          );
+          if (prevZone) {
+            prevZone.appendChild(itemEl);
+            zoneContents[previousZoneId].push(id);
+            return;
+          }
+        }
+
+        // Otherwise send back to panel
+        document.getElementById("draggables").appendChild(itemEl);
+        placements[id] = null;
+      }
+
+      function glassIsInZone(dzid) {
+        return zoneContents[dzid] && zoneContents[dzid].includes("glass");
+      }
+
+      function handleGlassMovedToZone(dzid) {
+        console.log("Glass moved to dropzone:", dzid);
+      }
+
+      function applyGlassImageChange(dzid, itemId) {
+        const glassImg = document.querySelector(
+          `.dropzone[data-id="${dzid}"] .draggable[data-id="glass"] img`
+        );
+        if (!glassImg) return;
+
+        const src = glassImg.src;
+        const hasWine =
+          src.includes("glass-wine") || src.includes("glass-froccs");
+        const hasSoda =
+          src.includes("glass-soda") || src.includes("glass-froccs");
+
+        if (itemId === "wineBottle") {
+          if (hasSoda) glassImg.src = "assets/glass-froccs.png";
+          else glassImg.src = "assets/glass-wine.png";
+        }
+
+        if (itemId === "soda") {
+          if (hasWine) glassImg.src = "assets/glass-froccs.png";
+          else glassImg.src = "assets/glass-soda.png";
+        }
+      }
+
+      function getGlassState() {
+        const level = LEVELS[currentLevel];
+        if (!level) return null;
+
+        // find dropzone containing the glass
+        for (const dzid in zoneContents) {
+          if (zoneContents[dzid].includes("glass")) {
+            const glassImg = document.querySelector(
+              `.dropzone[data-id="${dzid}"] .draggable[data-id="glass"] img`
+            );
+            if (!glassImg) return null;
+
+            if (glassImg.src.includes("glass-froccs")) return "froccs";
+            if (glassImg.src.includes("glass-soda")) return "soda";
+            if (glassImg.src.includes("glass-wine")) return "wine";
+            return "empty";
+          }
+        }
+        return null; // glass never placed
+      }
+
+      /* ============================================================
+                   RETURN ITEM TO DRAGGABLE PANEL
+                ============================================================ */
 
       const draggablesPanel = document.getElementById("draggables");
 
@@ -1060,26 +1725,26 @@
         const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
         if (!el) return;
 
-        // Remove from dropzone visually
         draggablesPanel.appendChild(el);
-
-        // Remove on-board styling
         el.classList.remove("on-board");
 
-        // Remove from bookkeeping
+        // --- NEW: unfolded when moved back to panel ---
+        applyUnfoldedVersion(el);
+
         const oldZone = placements[draggedId];
         if (oldZone) {
-          delete placements[draggedId];
-          delete zoneContents[oldZone];
+          zoneContents[oldZone] = zoneContents[oldZone].filter(
+            (id) => id !== draggedId
+          );
         }
+        placements[draggedId] = null;
 
-        // Reset button
         document.getElementById("next-btn").disabled = true;
       });
 
       /* -------------------------------------------------------------
-             SHOW NARRATIVE
-          ------------------------------------------------------------- */
+                       SHOW NARRATIVE
+                    ------------------------------------------------------------- */
 
       function showNarrative(nextLevelIndex) {
         console.log("Showing narrative for level", nextLevelIndex);
@@ -1097,21 +1762,27 @@
       }
 
       /* -------------------------------------------------------------
-             NEXT LEVEL
-          ------------------------------------------------------------- */
+                       NEXT LEVEL
+                    ------------------------------------------------------------- */
 
       document.getElementById("next-btn").onclick = () => {
         const level = LEVELS[currentLevel];
 
         // --- apply heritage points ---
-        Object.entries(placements).forEach(([eid, _]) => {
-          const el = level.elements.find((e) => e.id === eid);
-          if (!el || !el.heritage) return;
-          if (heritagePoints[el.heritage] !== undefined) {
-            heritagePoints[el.heritage] += 7;
-          }
-        });
+        if (level.id === 4) {
+          const glassState = getGlassState();
 
+          if (glassState === "froccs") {
+            // ONLY FROCCS gives Hungarian heritage
+            heritagePoints.hungarian += 7;
+          } else {
+            // wine-only, soda-only, empty → global
+            heritagePoints.russian += 0; // do nothing
+          }
+          updateBar();
+        }
+        // --- award points for this level ---
+        applyHeritagePointsForLevel(level);
         updateBar();
 
         // --- advance level --
@@ -1129,8 +1800,8 @@
       };
 
       /* -------------------------------------------------------------
-             CLOSE ELEMENT_PANEL
-          ------------------------------------------------------------- */
+                       CLOSE ELEMENT_PANEL
+                    ------------------------------------------------------------- */
 
       const panel = document.getElementById("left-panel");
       const panelToggle = document.getElementById("panel-toggle");
@@ -1139,15 +1810,15 @@
         const closed = panel.classList.toggle("closed");
 
         if (closed) {
-          panelToggle.textContent = "⮞";
+          panelToggle.textContent = "☰";
         } else {
-          panelToggle.textContent = "⮜  Inventory";
+          panelToggle.textContent = "☰ Memories";
         }
       });
 
       /* -------------------------------------------------------------
-             END GAME
-          ------------------------------------------------------------- */
+                       END GAME
+                    ------------------------------------------------------------- */
 
       function finishGame() {
         document.getElementById("draggables").innerHTML = "";
@@ -1170,18 +1841,26 @@
       }
 
       /* -------------------------------------------------------------
-             START
-          ------------------------------------------------------------- */
+                       START
+                    ------------------------------------------------------------- */
 
       document.getElementById("start-btn").onclick = () => {
         const start = document.getElementById("start-screen");
-        start.classList.add("hidden");
+        const inner = document.getElementById("start-inner");
 
-        // small delay for fade-out
+        // optional: book opening animation if you added it
+        inner.classList.add("book-opening");
+
         setTimeout(() => {
-          start.style.display = "none";
-          showNarrative(0);
-        }, 400);
+          start.classList.add("hidden");
+
+          setTimeout(() => {
+            start.style.display = "none";
+
+            // ✨ SHOW NARRATIVE 0 BEFORE MENU
+            showPreMenuNarrative();
+          }, 400);
+        }, 900); // or 0 if no book animation
       };
 
       initBar();

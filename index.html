@@ -41,6 +41,24 @@
         justify-content: center;
         align-items: center;
         z-index: 9999; /* above everything */
+        /* cozy vintage treatment */
+        background-color: rgba(
+          249,
+          241,
+          232,
+          0.86
+        ); /* warm paper tint over the photo */
+        background-blend-mode: overlay;
+        padding: 28px;
+        border: 1px solid rgba(110, 85, 65, 0.1);
+        box-shadow: 0 20px 40px rgba(60, 40, 30, 0.36),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06); /* soft depth + paper sheen */
+        -webkit-font-smoothing: antialiased;
+        backdrop-filter: blur(3px) saturate(1.05);
+        transition: opacity 0.45s ease,
+          transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
+        transform: translateY(8px);
+        will-change: opacity, transform;
       }
 
       #start-inner {
@@ -50,7 +68,7 @@
       }
 
       #start-inner h1 {
-        font-size: 5rem;
+        font-size: 3rem;
         color: #956c52;
         margin-bottom: 20px;
         margin-left: 50px;
@@ -151,14 +169,31 @@
         inset: 0;
         background: #f7efe7 url("backgrounds/photobook-open.png") no-repeat
           center;
-        background-size: 140%;
+        background-size: 130%;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9998;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+        /* cozy vintage treatment */
+        background-color: rgba(
+          249,
+          241,
+          232,
+          0.86
+        ); /* warm paper tint over the photo */
+        background-blend-mode: overlay;
+        padding: 28px;
+        border: 1px solid rgba(110, 85, 65, 0.1);
+        box-shadow: 0 20px 40px rgba(60, 40, 30, 0.36),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06); /* soft depth + paper sheen */
+        -webkit-font-smoothing: antialiased;
+        backdrop-filter: blur(3px) saturate(1.05);
+        transition: opacity 0.45s ease,
+          transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
+        transform: translateY(8px);
+        will-change: opacity, transform;
       }
 
       #menu-screen.active {
@@ -169,6 +204,7 @@
       #menu-inner {
         text-align: center;
         margin-bottom: 40px;
+        padding-bottom: 40px;
       }
 
       #menu-inner h2 {
@@ -201,6 +237,16 @@
         transform: translateY(-5px);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         border: #fffaf2 2px solid;
+      }
+
+      .menu-thumb.locked::after {
+        content: "🔒";
+        font-size: 2rem;
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       /* -------------------------------------------------------------
@@ -772,19 +818,176 @@
         );
       }
 
-
       /* ----------------------------New ideas--------------------------------- */
-      
-      
+      /* -------------------------------------------------------------
+   SOFT • COZY • PASTEL • HAND-DRAWN BUTTONS (subtle version)
+------------------------------------------------------------- */
+
+      button,
+      #start-btn,
+      #next-btn,
+      #narrative-btn {
+        font-family: inherit !important;
+
+        /* Soft pastel background */
+        background: #f7f3f0 !important;
+        background: linear-gradient(135deg, #f9f4f2, #f6f5fa) !important;
+
+        /* Very soft hand-drawn border */
+        border: 1.8px solid rgba(140, 110, 90, 0.35) !important;
+        border-radius: 18px !important;
+
+        /* Gentle baby-shadow, fuzzy like pencil */
+        box-shadow: 1px 2px 4px rgba(90, 70, 55, 0.15) !important;
+
+        padding: 10px 38px !important;
+
+        color: #6a594d !important;
+        cursor: pointer;
+
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          background 0.12s ease;
+      }
+
+      /* Soft hover — no wobbling, only gentle lift */
+      button:hover,
+      #start-btn:hover,
+      #narrative-btn:hover,
+      #next-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #f6f1ef, #f4f2f9) !important;
+        box-shadow: 2px 3px 6px rgba(80, 60, 45, 0.18) !important;
+      }
+
+      /* Pressed state — soft, cozy squash */
+      button:active,
+      #start-btn:active,
+      #narrative-btn:active,
+      #next-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0px 1px 2px rgba(70, 55, 40, 0.18) !important;
+      }
+
+      /* Disabled — faint, muted, soft */
+      #next-btn:disabled {
+        background: #eee8e3 !important;
+        border-color: rgba(150, 130, 115, 0.25) !important;
+        color: #a09188 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        cursor: not-allowed !important;
+      }
+
+      /* Subtle hand-drawn outline effect */
+      button::after,
+      #start-btn::after,
+      #narrative-btn::after,
+      #next-btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transform: translate(1.5px, 1px) rotate(0.6deg);
+        pointer-events: none;
+        opacity: 0.4;
+      }
+
+      /* -------------------------------------------------------------
+   SOFT • COZY • PASTEL SUMMARY POPUP (Your Heritage Mix)
+------------------------------------------------------------- */
+
+      #summary {
+        display: none; /* controlled by JS */
+        max-width: 450px;
+        margin: 40px auto;
+
+        /* Soft pastel paper */
+        background: linear-gradient(135deg, #fdf9f4 0%, #faf6f1 100%);
+        border-radius: 24px;
+        padding: 32px 40px;
+
+        /* Soft hand-drawn border */
+        border: 2px solid rgba(140, 110, 90, 0.25);
+        box-shadow: 0 8px 20px rgba(80, 60, 45, 0.12),
+          inset 0 1px 3px rgba(255, 255, 255, 0.6);
+
+        text-align: center;
+        color: #6b5445;
+
+        /* fade-in */
+        opacity: 0;
+        transform: translateY(10px);
+        animation: summaryFade 0.6s ease forwards;
+      }
+
+      @keyframes summaryFade {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #summary h2 {
+        font-family: "Playwrite CZ", cursive;
+        font-size: 2rem;
+        color: #8a6a52;
+        margin-bottom: 20px;
+
+        /* soft glow */
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      /* List styling */
+      #summary ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #summary li {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1.5px dashed rgba(120, 95, 80, 0.35);
+        border-radius: 999px;
+        padding: 10px 16px;
+
+        font-size: 1.05rem;
+        color: #6a564c;
+        letter-spacing: 0.3px;
+
+        display: flex;
+        justify-content: space-between;
+
+        /* hand-drawn subtle shadow */
+        box-shadow: 1px 2px 4px rgba(70, 55, 40, 0.1);
+      }
+
+      /* Optional: small heritage swatch next to each item */
+      #summary li::before {
+        content: "";
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        margin-right: 10px;
+        background: var(--heritage-color, #ddd);
+      }
     </style>
   </head>
   <body>
     <!-- Start screen -->
     <div id="start-screen">
       <div id="start-inner">
-        <h1>fernweh</h1>
-
-        <button id="start-btn">Play</button>
+        <h1>
+          Born<br />
+          of <br />
+          Many Places
+        </h1>
+        <p>A game about heritage, identity, and the memories we collect.</p>
+        <button id="start-btn">Open</button>
         <p><br /><br /><br /><br /></p>
       </div>
     </div>
@@ -792,7 +995,7 @@
     <div id="narrative-screen">
       <div id="narrative-inner">
         <p id="narrative-text"></p>
-        <button id="narrative-btn">Continue →</button>
+        <button id="narrative-btn">Continue</button>
       </div>
     </div>
 
@@ -825,7 +1028,7 @@
 
         <section id="controls">
           <div id="progress"></div>
-          <button id="next-btn" disabled>Lock in →</button>
+          <button id="next-btn" disabled>Lock in</button>
         </section>
 
         <section id="summary"></section>
@@ -844,10 +1047,6 @@
     <div id="dropzones"></div>
 
     <script>
-      /* -------------------------------------------------------------
-                       JAVASCRIPT (CLEAN, REWRITTEN)
-      ------------------------------------------------------------- */
-
       /* === Heritage Definitions === */
       const HERITAGES = [
         { key: "hungarian", label: "Hungarian", color: "#d78f88" },
@@ -873,6 +1072,9 @@
 
       /* === Levels === */
       const LEVELS = [
+        /* ============================
+       LEVEL 1  (Birth Cert)
+  ============================ */
         {
           id: 1,
           background: "backgrounds/birth_cert.png",
@@ -885,6 +1087,9 @@
           dropzones: [{ id: "dzAnna", x: 57, y: 44 }],
         },
 
+        /* ============================
+       LEVEL 2  (VHS Shelf)
+  ============================ */
         {
           id: 2,
           background: "backgrounds/shelf.png",
@@ -903,6 +1108,34 @@
           dropzones: [{ id: "vhsZone", xLeft: 18, y: 32 }],
         },
 
+        /* ============================
+       LEVEL 5  (Closet + Puppet)
+  ============================ */
+        {
+          id: 5,
+          background: "backgrounds/closet.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "hunCloth",
+              image: "assets/hungarian-folkclothing.png",
+              heritage: "hungarian",
+            },
+            {
+              id: "svabCloth",
+              image: "assets/svab-folkclothing.png",
+              heritage: "svab",
+            },
+          ],
+          dropzones: [
+            { id: "dzPuppet", x: 31.5, y: 56 },
+            { id: "dzCloset", x: 69, y: 52 },
+          ],
+        },
+
+        /* ============================
+       LEVEL 3  (Christmas Tree)
+  ============================ */
         {
           id: 3,
           background: "backgrounds/christmas_tree.png",
@@ -925,61 +1158,9 @@
           ],
         },
 
-        {
-          id: 4,
-          background: "backgrounds/bar.png",
-          maxPerZone: 1,
-          elements: [
-            { id: "wineBottle", image: "assets/wine.png" },
-            {
-              id: "glass",
-              image: "assets/glass-empty.png",
-              allowMultiple: true,
-            },
-            { id: "soda", image: "assets/soda.png" },
-          ],
-          dropzones: [
-            { id: "dzBottle", x: 30, y: 62 },
-            { id: "dzGlass", x: 50, y: 62 },
-            { id: "dzSoda", x: 70, y: 62 },
-          ],
-        },
-        {
-          id: 5,
-          background: "backgrounds/closet.png",
-          maxPerZone: 1,
-          elements: [
-            {
-              id: "hunCloth",
-              image: "assets/hungarian-folkclothing.png",
-              heritage: "hungarian",
-            },
-            {
-              id: "svabCloth",
-              image: "assets/svab-folkclothing.png",
-              heritage: "svab",
-            },
-          ],
-          dropzones: [
-            { id: "dzPuppet", x: 31.5, y: 56 },
-            { id: "dzCloset", x: 69, y: 52 },
-          ],
-        },
-        {
-          id: 6,
-          background: "backgrounds/pizza-on-table.png",
-          maxPerZone: 1,
-          elements: [
-            { id: "knife", image: "assets/knife.png", heritage: "global" },
-            {
-              id: "pizzaCutter",
-              image: "assets/pizza-cutter.png",
-              heritage: "hungarian",
-            },
-            { id: "scissor", image: "assets/scissor.png", heritage: "italian" },
-          ],
-          dropzones: [{ id: "dzTrigger", x: 54, y: 42 }],
-        },
+        /* ============================
+       LEVEL 7  (Garden Icons)
+  ============================ */
         {
           id: 7,
           background: "backgrounds/garden.png",
@@ -999,6 +1180,52 @@
           ],
           dropzones: [{ id: "dzIcon", x: 58, y: 24.8 }],
         },
+
+        /* ============================
+       LEVEL 4  (Bar / Drinks)
+  ============================ */
+        {
+          id: 4,
+          background: "backgrounds/bar.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "wineBottle", image: "assets/wine.png" },
+            {
+              id: "glass",
+              image: "assets/glass-empty.png",
+              allowMultiple: true,
+            },
+            { id: "soda", image: "assets/soda.png" },
+          ],
+          dropzones: [
+            { id: "dzBottle", x: 30, y: 62 },
+            { id: "dzGlass", x: 50, y: 62 },
+            { id: "dzSoda", x: 70, y: 62 },
+          ],
+        },
+
+        /* ============================
+       LEVEL 6  (Pizza Tools)
+  ============================ */
+        {
+          id: 6,
+          background: "backgrounds/pizza-on-table.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "knife", image: "assets/knife.png", heritage: "global" },
+            {
+              id: "pizzaCutter",
+              image: "assets/pizza-cutter.png",
+              heritage: "hungarian",
+            },
+            { id: "scissor", image: "assets/scissor.png", heritage: "italian" },
+          ],
+          dropzones: [{ id: "dzTrigger", x: 54, y: 42 }],
+        },
+
+        /* ============================
+       LEVEL 8  (Desk + Foods)
+  ============================ */
         {
           id: 8,
           background: "backgrounds/desk3.png",
@@ -1022,6 +1249,7 @@
               heritage: "russian",
             },
             { id: "mititei", image: "assets/mititei.png", heritage: "szekely" },
+            { id: "gulyas", image: "assets/gulyas.png", heritage: "hungarian" },
           ],
           dropzones: [
             { id: "dzTable1", x: 51, y: 15 },
@@ -1032,26 +1260,30 @@
         },
       ];
 
+      let preMenuIndex = 0;
+
       /* Narratives between levels */
-      const PRE_MENU_TEXT =
-        "Every story begins somewhere… before you dive into your memories, open the book and choose where to start.";
+      const PRE_MENU = [
+        "I love to have a structure, to have my things and thoughts in order. I love labeling things, categorizing them, putting them in boxes. But sometimes, life is not that simple. Sometimes, things don’t fit neatly into one box.",
+        "When I tried to define my identity, everything felt blurry. What is my culture? What is my heritage? Where do I belong? I can’t say I’m fully Hungarian, but I also can’t claim a perfect mix of two nationalities. So how do we define identity? By language? By where we live? By our blood, our memories, or something else entirely?",
+        "I tried to showcase my dilemma with this cozy puzzle game. This is a game about heritage, identity, and the memories I collected along the way.",
+        "Are you ready to explore it?",
+      ];
 
       const NARRATIVE = {
-        0: "Heritage is the stories we grow up with, shaping how we see the world and ourself in it.",
-        1: "Some memories sit next to each other like tapes on an old shelf…",
-        2: "Life’s small rituals—like mixing a drink—carry heritage too.",
-        3: "Stories change shape depending on where they come from…",
-        4: "Music echoes through generations, changing but never disappearing.",
-        5: "Homes decorate themselves with memories of the people inside.",
-        6: "School days mark us with discipline, laughter, and winter walks.",
-        7: "Holidays whisper ancient traditions into the present.",
-        8: "Every neighbourhood has its rhythm, its benches, its bakery smell.",
-        9: "Markets carry smells that remind you of places you’ve never been.",
-        10: "Languages tell the story of where your voice has travelled.",
-        11: "Dreams of home mix all your pasts into your future.",
+        0: "I was born with two names, one from my hungarian grandmother, and one from my russian grandmother. This would indicate two heritages. Do I really belong to both? I don't even speak russian...",
+        1: "But I grew up watching russian cartoons, and eating russian food. So maybe I do belong to both after all?",
+        2: "I went to a german national bilingual school, where I learned about my sváb (ungarndeutsche) heritage, what came from my great-grandmother. I sang in the national choir, and learned folk dances. I tried the hungarian ones too, but hated them then. I hid my folk clothes in the back of the closet. Does it make me less hungarian?",
+        3: "As I spent more and more time away from home, I grew away from my russian roots. But it stayed still with me and my family during the most special time of the year: Christmas.",
+        4: "Later, I moved to Transylvania, Romania. They speak hungarian there, but their culture is different. They have their own traditions, food, and way of life. They call themselves Székelys. I spent there two years of my life, I started speak like them, behave like them, but did I become one of them? I have never been to Russia, so am I more Székely than Russian now?",
+        5: "Moving from Hungary made me realize how much I'm hungarian after all. When I moved to Italy I experienced such differencies I took for granted back home. Once I even taught a bartender how to make a proper fröccs!",
+        6: "But if I can be more székely than russian, it's not about blood or passport. If I pick up traditions, language, food, and memories from a place, does it make me part of that culture? Can I choose my heritage, for example be Italian? ",
+        7: "After all, identity is fluid. It changes with time, place, and experience. It's not about fitting into a box, but about embracing the complexity of who we are. All these cultures, memories, and experiences make me who I am today.",
+        8: "But society loves boxes, and so do I. So I choose to fit in all these boxes at once. Because I am born of many places.",
       };
 
       let currentLevel = 0;
+      let unlockedLevels = 1;
       let placements = {};
       let zoneContents = {};
 
@@ -1145,9 +1377,22 @@
           thumb.className = "menu-thumb";
           thumb.style.backgroundImage = `url(${lvl.background})`;
 
-          thumb.onclick = () => {
-            startLevelFromMenu(index);
-          };
+          // LOCKED STATE
+          if (index >= unlockedLevels) {
+            thumb.style.filter = "grayscale(100%) brightness(60%)";
+            thumb.style.cursor = "not-allowed";
+            thumb.style.opacity = "0.5";
+            thumb.classList.add("locked");
+
+            // prevent clicking locked levels
+            thumb.onclick = () => {};
+          }
+          // UNLOCKED STATE
+          else {
+            thumb.onclick = () => {
+              startLevelFromMenu(index);
+            };
+          }
 
           wrap.appendChild(thumb);
         });
@@ -1158,28 +1403,47 @@
         document.getElementById("menu-screen").classList.add("active");
       }
 
+      function showLevelIntro(levelIndex) {
+        const screen = document.getElementById("narrative-screen");
+        const textEl = document.getElementById("narrative-text");
+
+        textEl.innerHTML = NARRATIVE[levelIndex] || "";
+        screen.classList.add("active");
+
+        document.getElementById("narrative-btn").onclick = () => {
+          screen.classList.remove("active");
+          loadLevel(levelIndex); // ⭐ Now it loads the level
+        };
+      }
+
       function startLevelFromMenu(levelIndex) {
         currentLevel = levelIndex;
-
         document.getElementById("menu-screen").classList.remove("active");
 
-        // Option A: show narrative before level
-        showNarrative(levelIndex);
-
-        // Option B (skip narrative):
-        // loadLevel(levelIndex);
+        // ⭐ Show intro narrative before each level
+        showLevelIntro(levelIndex);
       }
 
       function showPreMenuNarrative() {
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
 
-        textEl.textContent = PRE_MENU_TEXT;
+        // Show current intro text
+        textEl.innerHTML = PRE_MENU[preMenuIndex];
         screen.classList.add("active");
 
         document.getElementById("narrative-btn").onclick = () => {
-          screen.classList.remove("active");
-          showMenu(); // ✨ then go to the menu
+          preMenuIndex++;
+
+          // 👉 If more intros remain → show next intro
+          if (preMenuIndex < PRE_MENU.length) {
+            showPreMenuNarrative();
+          }
+          // 👉 If finished → go to menu
+          else {
+            screen.classList.remove("active");
+            showMenu();
+          }
         };
       }
 
@@ -1747,17 +2011,20 @@
                     ------------------------------------------------------------- */
 
       function showNarrative(nextLevelIndex) {
-        console.log("Showing narrative for level", nextLevelIndex);
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
 
-        textEl.textContent = NARRATIVE[nextLevelIndex] || "";
+        textEl.innerHTML = NARRATIVE[nextLevelIndex] || "";
         screen.classList.add("active");
 
-        // When player clicks Continue → load next level
         document.getElementById("narrative-btn").onclick = () => {
           screen.classList.remove("active");
-          loadLevel(nextLevelIndex);
+
+          // ⭐ After narrative → go to Menu instead of starting level
+          document.getElementById("menu-screen").classList.add("active");
+          buildMenu();
+
+          // ⭐ DO NOT load level here — wait for user to click it in the menu
         };
       }
 
@@ -1768,35 +2035,35 @@
       document.getElementById("next-btn").onclick = () => {
         const level = LEVELS[currentLevel];
 
-        // --- apply heritage points ---
+        // Award heritage points
         if (level.id === 4) {
           const glassState = getGlassState();
-
           if (glassState === "froccs") {
-            // ONLY FROCCS gives Hungarian heritage
             heritagePoints.hungarian += 7;
-          } else {
-            // wine-only, soda-only, empty → global
-            heritagePoints.russian += 0; // do nothing
           }
           updateBar();
         }
-        // --- award points for this level ---
+
         applyHeritagePointsForLevel(level);
         updateBar();
 
-        // --- advance level --
-        console.log(currentLevel);
+        // Advance level index
         currentLevel++;
 
-        // if game is over → finish
+        // Unlock next level
+        if (unlockedLevels < LEVELS.length) {
+          unlockedLevels = currentLevel + 1;
+        }
+
+        // If last level, finish
         if (currentLevel >= LEVELS.length) {
           finishGame();
           return;
         }
 
-        // --- show narrative (new behaviour) ---
-        showNarrative(currentLevel);
+        // ⭐ NO NARRATIVE HERE — just go back to menu
+        document.getElementById("menu-screen").classList.add("active");
+        buildMenu();
       };
 
       /* -------------------------------------------------------------
@@ -1828,14 +2095,15 @@
         const summary = document.getElementById("summary");
         summary.style.display = "block";
 
-        let html = `<h2>Your heritage mix</h2><ul>`;
-        const total = Object.values(heritagePoints).reduce((a, b) => a + b, 0);
+        // FIX: add total calculation
+        const total =
+          Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
+        let html = `<h2>Your heritage mix</h2><ul>`;
         HERITAGES.forEach((h) => {
           const pct = ((heritagePoints[h.key] / total) * 100).toFixed(1);
-          html += `<li>${h.label}: ${pct}%</li>`;
+          html += `<li style="--heritage-color:${h.color}">${h.label}: ${pct}%</li>`;
         });
-
         html += `</ul>`;
         summary.innerHTML = html;
       }

@@ -65,6 +65,7 @@
         padding: 10px 60px;
         border-radius: 100px;
         text-align: center;
+        margin-top: -60px; /* move up */
       }
 
       #start-inner h1 {
@@ -72,21 +73,24 @@
         color: #956c52;
         margin-bottom: 20px;
         margin-left: 50px;
+        line-height: 1.5;
         font-family: "Playwrite CZ", cursive;
       }
 
       #start-inner p {
         font-size: 1rem;
         color: #826755;
-        width: 400px;
+        width: 500px;
         text-align: center;
-        margin-bottom: 10px;
+        padding-top: 10px;
+        margin-bottom: 30px;
         margin-left: 45px;
       }
 
       #start-btn {
         font-size: 1.2rem;
-        padding: 12px 80px;
+        padding-top: 12px;
+        padding-bottom: 12px;
         border-radius: 999px;
         margin-left: 45px;
         border: none;
@@ -975,6 +979,66 @@
         margin-right: 10px;
         background: var(--heritage-color, #ddd);
       }
+
+      /* ================================
+   NARRATIVE — CENTERED LAYOUT
+================================ */
+      /* BACKDROP */
+      #narrative-screen {
+        position: fixed;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      #narrative-screen.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* NARRATIVE CARD */
+      #narrative-inner {
+        position: relative;
+        width: 600px;
+        max-width: 600px;
+        height: 430px; /* fixed height → stable layout */
+        border-radius: 24px;
+        padding: 40px 40px 80px; /* space for button */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* TEXT BOX — fixed height */
+      #narrative-text-wrapper {
+        flex: 1; /* take all available vertical space */
+        display: flex;
+        justify-content: center; /* vertical centering */
+        align-items: center; /* horizontal centering */
+        overflow-y: auto; /* scroll only if too long */
+        text-align: center;
+        padding: 0 10px;
+      }
+
+      /* Actual text */
+      #narrative-text {
+        font-size: 1.35rem;
+        line-height: 1.55;
+        color: #f5f2e8;
+        max-width: 480px;
+      }
+
+      #narrative-btn {
+        width: 30% !important; /* ← keeps button size natural */
+        display: inline-block !important;
+        padding: 12px 36px !important; /* use your preferred padding */
+      }
     </style>
   </head>
   <body>
@@ -988,13 +1052,15 @@
         </h1>
         <p>A game about heritage, identity, and the memories we collect.</p>
         <button id="start-btn">Open</button>
-        <p><br /><br /><br /><br /></p>
       </div>
     </div>
 
     <div id="narrative-screen">
       <div id="narrative-inner">
-        <p id="narrative-text"></p>
+        <div id="narrative-text-wrapper">
+          <p id="narrative-text"></p>
+        </div>
+
         <button id="narrative-btn">Continue</button>
       </div>
     </div>
@@ -1571,12 +1637,12 @@
           zwrap.appendChild(dz);
         });
 
-        document.getElementById("next-btn").disabled = true;
+        document.getElementById("next-btn").disabled = !anyZoneHasItems();
       }
 
       /* -------------------------------------------------------------
                        DRAG & DROP
-                    ------------------------------------------------------------- */
+       ------------------------------------------------------------- */
 
       let draggedId = null;
 
@@ -1647,6 +1713,10 @@
         }
       }
 
+      function anyZoneHasItems() {
+        return Object.values(zoneContents).some((arr) => arr && arr.length > 0);
+      }
+
       function dropItem(ev) {
         ev.preventDefault();
         this.classList.remove("dropping");
@@ -1677,7 +1747,7 @@
           placements = {};
           ordered.forEach((id) => (placements[id] = dzid));
           if (Object.keys(placements).length >= 1)
-            document.getElementById("next-btn").disabled = false;
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
           return;
         }
 
@@ -1736,7 +1806,7 @@
 
           // Enable lock-in if something was placed
           if (Object.keys(placements).length >= 1) {
-            document.getElementById("next-btn").disabled = false;
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
           }
 
           return;
@@ -1779,7 +1849,7 @@
           zoneContents[dzid].push(draggedId);
           placements[draggedId] = dzid;
 
-          document.getElementById("next-btn").disabled = false;
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
           return;
         }
 
@@ -1796,7 +1866,7 @@
             // --- CHANGE BACKGROUND ---
             document.getElementById("tree-bg").style.backgroundImage =
               'url("backgrounds/pizza-cut-on-table.png")';
-            document.getElementById("next-btn").disabled = false;
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
 
             // --- Immediately eject element back to panel ---
             const panel = document.getElementById("draggables");
@@ -1871,7 +1941,7 @@
           el.classList.add("on-board");
           placements[draggedId] = dzid;
 
-          document.getElementById("next-btn").disabled = false;
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
           return;
         }
 
@@ -1886,7 +1956,7 @@
         placements[draggedId] = dzid;
 
         if (Object.keys(placements).length >= 1)
-          document.getElementById("next-btn").disabled = false;
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
       }
 
       /* ============================================================
@@ -1974,7 +2044,7 @@
 
       /* ============================================================
                    RETURN ITEM TO DRAGGABLE PANEL
-                ============================================================ */
+      ============================================================ */
 
       const draggablesPanel = document.getElementById("draggables");
 
@@ -2003,7 +2073,7 @@
         }
         placements[draggedId] = null;
 
-        document.getElementById("next-btn").disabled = true;
+        document.getElementById("next-btn").disabled = !anyZoneHasItems();
       });
 
       /* -------------------------------------------------------------
@@ -2030,7 +2100,7 @@
 
       /* -------------------------------------------------------------
                        NEXT LEVEL
-                    ------------------------------------------------------------- */
+      ------------------------------------------------------------- */
 
       document.getElementById("next-btn").onclick = () => {
         const level = LEVELS[currentLevel];
@@ -2068,7 +2138,7 @@
 
       /* -------------------------------------------------------------
                        CLOSE ELEMENT_PANEL
-                    ------------------------------------------------------------- */
+      ------------------------------------------------------------- */
 
       const panel = document.getElementById("left-panel");
       const panelToggle = document.getElementById("panel-toggle");
@@ -2085,7 +2155,7 @@
 
       /* -------------------------------------------------------------
                        END GAME
-                    ------------------------------------------------------------- */
+     ------------------------------------------------------------- */
 
       function finishGame() {
         document.getElementById("draggables").innerHTML = "";
@@ -2110,7 +2180,7 @@
 
       /* -------------------------------------------------------------
                        START
-                    ------------------------------------------------------------- */
+     ------------------------------------------------------------- */
 
       document.getElementById("start-btn").onclick = () => {
         const start = document.getElementById("start-screen");

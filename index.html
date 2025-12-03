@@ -140,6 +140,7 @@
         padding: 60px 80px;
         border-radius: 22px;
         text-align: center;
+        height: auto;
       }
 
       #narrative-text {
@@ -566,6 +567,7 @@
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
+        width: 260px;
       }
 
       .level3-zone {
@@ -587,12 +589,13 @@
       }
 
       .level4-zone {
-        width: 420px !important;
+        width: 540px !important;
         min-height: 50px !important;
         max-height: 70px !important;
         border-radius: 12px;
         display: flex;
         align-items: flex-start;
+        background: rgba(246, 246, 246, 0.34);
       }
 
       /* Level 5 dropzones */
@@ -1007,7 +1010,7 @@
         position: relative;
         width: 600px;
         max-width: 600px;
-        height: 430px; /* fixed height → stable layout */
+        height: 530px; /* fixed height → stable layout */
         border-radius: 24px;
         padding: 40px 40px 80px; /* space for button */
         display: flex;
@@ -1071,6 +1074,35 @@
         <div id="menu-levels"></div>
       </div>
     </div>
+
+    <button
+      id="mute-btn"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border: 2px solid rgba(120, 95, 80, 0.4);
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      🔊
+    </button>
+
+    <audio id="bg-music" loop preload="auto">
+      <source src="/assets/bg-music.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="pop-sound" preload="auto">
+      <source src="assets/pop.mp3" type="audio/mpeg" />
+    </audio>
 
     <!-- Background Layers -->
     <div id="tree-bg"></div>
@@ -1150,7 +1182,7 @@
             { id: "nina", image: "assets/nina.png", heritage: "russian" },
             { id: "toro", image: "assets/toro.png", heritage: "hungarian" },
           ],
-          dropzones: [{ id: "dzAnna", x: 57, y: 44 }],
+          dropzones: [{ id: "dzAnna", x: 59, y: 44 }],
         },
 
         /* ============================
@@ -1513,6 +1545,44 @@
         };
       }
 
+      /* ============================================================
+      BACKGROUND MUSIC + MUTE BUTTON
+============================================================ */
+
+      const bgMusic = document.getElementById("bg-music");
+      const muteBtn = document.getElementById("mute-btn");
+
+      let musicStarted = false;
+      let isMuted = false;
+
+      // Play music only after start button is pressed
+      function startMusic() {
+        if (!musicStarted) {
+          bgMusic.volume = 0.4; // soft volume
+          bgMusic.play().catch(() => {
+            console.warn("Autoplay blocked until user interacts.");
+          });
+          musicStarted = true;
+        }
+      }
+
+      // Toggle mute state
+      muteBtn.addEventListener("click", () => {
+        isMuted = !isMuted;
+
+        bgMusic.muted = isMuted;
+        muteBtn.textContent = isMuted ? "🔇" : "🔊";
+      });
+
+      const popSound = document.getElementById("pop-sound");
+
+      function playPop() {
+        if (!isMuted) {
+          popSound.currentTime = 0; // restart if played rapidly
+          popSound.play().catch(() => {});
+        }
+      }
+
       /* -------------------------------------------------------------
                        LOAD LEVEL
           ------------------------------------------------------------- */
@@ -1526,7 +1596,7 @@
           "tree-bg"
         ).style.backgroundImage = `url(${level.background})`;
 
-        document.getElementById("progress").textContent = `Step ${i + 1}/${
+        document.getElementById("progress").textContent = `Scene ${i + 1}/${
           LEVELS.length
         }`;
 
@@ -1713,6 +1783,39 @@
         }
       }
 
+      function swapIntoZone(dzEl, newItemEl, dzid) {
+        const panel = document.getElementById("draggables");
+
+        // find the existing item
+        const existingItems = zoneContents[dzid] || [];
+        if (existingItems.length === 0) return false;
+
+        const oldItemId = existingItems[0];
+        const oldItemEl = document.querySelector(
+          `.draggable[data-id="${oldItemId}"]`
+        );
+        if (!oldItemEl) return false;
+
+        // Move old item back to panel
+        panel.appendChild(oldItemEl);
+        oldItemEl.classList.remove("on-board");
+        playPop(); // ← ADD HERE
+
+        // Update bookkeeping
+        zoneContents[dzid] = [];
+        placements[oldItemId] = null;
+
+        // Place new item visually
+        dzEl.appendChild(newItemEl);
+        newItemEl.classList.add("on-board");
+
+        // Update bookkeeping for new item
+        zoneContents[dzid] = [newItemEl.dataset.id];
+        placements[newItemEl.dataset.id] = dzid;
+
+        return true;
+      }
+
       function anyZoneHasItems() {
         return Object.values(zoneContents).some((arr) => arr && arr.length > 0);
       }
@@ -1724,6 +1827,11 @@
         // --- ALWAYS clean previous zone bookkeeping ---
         const dzid = this.dataset.id;
         const level = LEVELS[currentLevel];
+        // --- REBUILD zoneContents[dzid] to match what is visually there ---
+        const currentChildren = [...this.querySelectorAll(".draggable")].map(
+          (d) => d.dataset.id
+        );
+        zoneContents[dzid] = currentChildren;
 
         const oldZone = placements[draggedId];
         if (oldZone && oldZone !== dzid) {
@@ -1740,6 +1848,7 @@
         if (level.id === 2) {
           insertAtPosition(this, el, ev);
           el.classList.add("on-board");
+          playPop(); // ← ADD HERE
           const ordered = [...this.querySelectorAll(".draggable")].map(
             (d) => d.dataset.id
           );
@@ -1755,60 +1864,67 @@
         if (level.id === 4) {
           const dzid = this.dataset.id;
 
-          // Ensure zone contents array exists
-          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+          // --- REBUILD zone contents BEFORE logic ---
+          const existingItems = [...this.querySelectorAll(".draggable")].map(
+            (d) => d.dataset.id
+          );
+          zoneContents[dzid] = existingItems;
 
-          const isGlass = draggedId === "glass";
           const isWine = draggedId === "wineBottle";
           const isSoda = draggedId === "soda";
+          const isGlass = draggedId === "glass";
 
-          const hasGlass = zoneContents[dzid].includes("glass");
           const hasWine = zoneContents[dzid].includes("wineBottle");
           const hasSoda = zoneContents[dzid].includes("soda");
+          const hasGlass = zoneContents[dzid].includes("glass");
+
+          console.log("ZONE NOW:", zoneContents[dzid]);
 
           // ----------------------------------------------------
-          // RULE 1: Glass cannot enter zone with wine or soda
+          // RULE A — Glass cannot enter if wine or soda already placed
           // ----------------------------------------------------
           if (isGlass && (hasWine || hasSoda)) {
             this.classList.remove("dropping");
-            return; // BLOCK
+            return;
           }
 
           // ----------------------------------------------------
-          // RULE 2-3: Wine <-> Soda cannot mix
+          // RULE B — If GLASS is present → allow wine + soda freely
+          // (froccs override)
           // ----------------------------------------------------
-          if (isWine && hasSoda) {
-            this.classList.remove("dropping");
-            return; // BLOCK
+          if (!hasGlass) {
+            // normal blocking rules apply
+            if (isWine && hasSoda) {
+              this.classList.remove("dropping");
+              return;
+            }
+            if (isSoda && hasWine) {
+              this.classList.remove("dropping");
+              return;
+            }
           }
 
-          if (isSoda && hasWine) {
-            this.classList.remove("dropping");
-            return; // BLOCK
-          }
-
           // ----------------------------------------------------
-          // PLACE ITEM IN DROPZONE
+          // PLACE ITEM
           // ----------------------------------------------------
           this.appendChild(el);
           el.classList.add("on-board");
+          playPop();
+
+          // update bookkeeping
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
           zoneContents[dzid].push(draggedId);
           placements[draggedId] = dzid;
 
           // ----------------------------------------------------
-          // RULE 4: Froccs mix → update image + eject beverage
-          // Only when glass is already present
+          // RULE C — Froccs mixing in glass
           // ----------------------------------------------------
           if (hasGlass && (isWine || isSoda)) {
             applyGlassImageChange(dzid, draggedId);
-            ejectItem(draggedId, dzid);
+            ejectItem(draggedId, dzid); // beverage disappears after mixing
           }
 
-          // Enable lock-in if something was placed
-          if (Object.keys(placements).length >= 1) {
-            document.getElementById("next-btn").disabled = !anyZoneHasItems();
-          }
-
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
           return;
         }
 
@@ -1816,85 +1932,152 @@
         if (level.id === 5) {
           const dzid = this.dataset.id;
 
-          // --- DO NOT ALLOW MORE THAN ONE ITEM IN dzPuppet ---
-          if (dzid === "dzPuppet") {
-            if (!zoneContents[dzid]) zoneContents[dzid] = [];
-            if (zoneContents[dzid].length >= 1) {
-              // Block placement
-              this.classList.remove("dropping");
-              return;
-            }
-          }
-
-          // Ensure zone contents array
           if (!zoneContents[dzid]) zoneContents[dzid] = [];
 
-          // Place visually
-          this.appendChild(el);
-          el.classList.add("on-board");
+          const oldZone = placements[draggedId];
 
-          // --- CLOSET → folded ---
-          if (dzid === "dzCloset") {
-            applyFoldedVersion(el);
-          }
-
-          // --- PUPPET → unfolded ---
+          /* ----------------------------------------------------------
+       CASE 1: dzPuppet — MAX 1 ITEM + FULL SWAP
+     ---------------------------------------------------------- */
           if (dzid === "dzPuppet") {
-            applyUnfoldedVersion(el);
+            // If puppet has 1 item → always swap (panel OR other dropzone)
+            if (zoneContents[dzid].length === 1) {
+              const oldId = zoneContents[dzid][0];
+              const oldEl = document.querySelector(
+                `.draggable[data-id="${oldId}"]`
+              );
+
+              // return old Puppet item to panel
+              document.getElementById("draggables").appendChild(oldEl);
+              oldEl.classList.remove("on-board");
+              playPop(); // ← ADD HERE
+              oldEl.classList.remove("in-puppet-zone");
+              applyUnfoldedVersion(oldEl);
+
+              // bookkeeping
+              zoneContents[dzid] = [];
+              placements[oldId] = null;
+            }
+
+            // PLACE NEW ITEM INTO PUPPET
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
             el.classList.add("in-puppet-zone");
-          } else {
-            el.classList.remove("in-puppet-zone");
+            applyUnfoldedVersion(el);
+
+            zoneContents[dzid] = [draggedId];
+            placements[draggedId] = dzid;
+
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
+            return;
           }
 
-          zoneContents[dzid].push(draggedId);
-          placements[draggedId] = dzid;
+          /* ----------------------------------------------------------
+       CASE 2: dzCloset — UNLIMITED ITEMS, NO SWAP
+     ---------------------------------------------------------- */
+          if (dzid === "dzCloset") {
+            // PLACE NEW ITEM (no limit, no swap)
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
+            el.classList.remove("in-puppet-zone");
 
-          document.getElementById("next-btn").disabled = !anyZoneHasItems();
-          return;
+            // FIX: always reset first, then fold (prevents long-hover bug)
+            applyUnfoldedVersion(el);
+            applyFoldedVersion(el);
+
+            zoneContents[dzid].push(draggedId);
+            placements[draggedId] = dzid;
+
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
+            return;
+          }
         }
 
         // === LEVEL 6: special trigger zone ===
         if (LEVELS[currentLevel].id === 6) {
           const dzid = this.dataset.id;
 
-          // Only one special dropzone exists
           if (dzid === "dzTrigger") {
             const el = document.querySelector(
               `.draggable[data-id="${draggedId}"]`
             );
 
-            // --- CHANGE BACKGROUND ---
+            // --- Step 1: Activate next button permanently ---
+            level6Activated = true;
+            document.getElementById("next-btn").disabled = false;
+
+            // --- Step 2: Change background once triggered ---
             document.getElementById("tree-bg").style.backgroundImage =
               'url("backgrounds/pizza-cut-on-table.png")';
-            document.getElementById("next-btn").disabled = !anyZoneHasItems();
 
-            // --- Immediately eject element back to panel ---
+            // --- Step 3: Immediately eject element back to panel ---
             const panel = document.getElementById("draggables");
             panel.appendChild(el);
             el.classList.remove("on-board");
+            playPop(); // ← ADD HERE
 
-            // Clear internal bookkeeping
+            // --- Step 4: Ensure dropzone stays empty in bookkeeping ---
             placements[draggedId] = null;
             zoneContents[dzid] = [];
 
             this.classList.remove("dropping");
-            return; // stop here, nothing else allowed
+            return; // STOP — trigger zone never accepts items
           }
         }
 
-        // === LEVEL 7 — allow ONLY ONE drop into dzIcon ===
+        // === LEVEL 7 — SWAPPABLE SINGLE SLOT ===
         if (level.id === 7) {
           const dzid = this.dataset.id;
+          const el = document.querySelector(
+            `.draggable[data-id="${draggedId}"]`
+          );
 
-          // Only one element allowed inside dzIcon
           if (dzid === "dzIcon") {
             if (!zoneContents[dzid]) zoneContents[dzid] = [];
 
-            if (zoneContents[dzid].length >= 1) {
-              // Zone already has an item → BLOCK placement
-              this.classList.remove("dropping");
-              return;
+            const panel = document.getElementById("draggables");
+
+            // --- SWAP IF ONE ITEM EXISTS ---
+            if (zoneContents[dzid].length === 1) {
+              const oldId = zoneContents[dzid][0];
+              const oldEl = document.querySelector(
+                `.draggable[data-id="${oldId}"]`
+              );
+              const oldZone = placements[oldId];
+
+              // Send old item back where it came from
+              if (oldZone && oldZone !== dzid) {
+                const oldZoneEl = document.querySelector(
+                  `.dropzone[data-id="${oldZone}"]`
+                );
+                if (oldZoneEl) {
+                  oldZoneEl.appendChild(oldEl);
+                  zoneContents[oldZone].push(oldId);
+                } else {
+                  panel.appendChild(oldEl);
+                }
+              } else {
+                panel.appendChild(oldEl);
+              }
+
+              zoneContents[dzid] = [];
+              placements[oldId] = oldZone || null;
             }
+
+            // --- PLACE NEW ITEM ---
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
+
+            zoneContents[dzid] = [draggedId];
+            placements[draggedId] = dzid;
+
+            // NEXT BUTTON PERMANENTLY ENABLED
+            document.getElementById("next-btn").disabled = false;
+
+            return;
           }
         }
 
@@ -1939,6 +2122,7 @@
           // Place the dragged element into zone
           this.appendChild(el);
           el.classList.add("on-board");
+          playPop();
           placements[draggedId] = dzid;
 
           document.getElementById("next-btn").disabled = !anyZoneHasItems();
@@ -1950,6 +2134,7 @@
         // Add element visually
         this.appendChild(el);
         el.classList.add("on-board");
+        playPop();
 
         // Update tracking
         zoneContents[dzid].push(draggedId);
@@ -2061,6 +2246,7 @@
 
         draggablesPanel.appendChild(el);
         el.classList.remove("on-board");
+        playPop(); // ← ADD HERE
 
         // --- NEW: unfolded when moved back to panel ---
         applyUnfoldedVersion(el);
@@ -2073,7 +2259,9 @@
         }
         placements[draggedId] = null;
 
-        document.getElementById("next-btn").disabled = !anyZoneHasItems();
+        if (LEVELS[currentLevel].id !== 6) {
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
+        }
       });
 
       /* -------------------------------------------------------------
@@ -2161,6 +2349,7 @@
         document.getElementById("draggables").innerHTML = "";
         document.getElementById("dropzones").innerHTML = "";
         document.getElementById("next-btn").style.display = "none";
+        document.getElementById("left-panel").style.display = "none";
 
         const summary = document.getElementById("summary");
         summary.style.display = "block";
@@ -2188,7 +2377,6 @@
 
         // optional: book opening animation if you added it
         inner.classList.add("book-opening");
-
         setTimeout(() => {
           start.classList.add("hidden");
 
@@ -2197,6 +2385,7 @@
 
             // ✨ SHOW NARRATIVE 0 BEFORE MENU
             showPreMenuNarrative();
+            startMusic();
           }, 400);
         }, 900); // or 0 if no book animation
       };

@@ -24,6 +24,7 @@
         display: flex;
         justify-content: center;
         align-items: stretch;
+        font-family: "Nunito", sans-serif;
       }
 
       /* ---------------------------------------------------------
@@ -34,40 +35,62 @@
         position: fixed;
         inset: 0;
         background: #f7efe7 url("backgrounds/photobook.png") no-repeat;
-        background-size: cover;
+        background-size: 120%;
         background-position: center;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9999; /* above everything */
+        /* cozy vintage treatment */
+        background-color: rgba(
+          249,
+          241,
+          232,
+          0.86
+        ); /* warm paper tint over the photo */
+        background-blend-mode: overlay;
+        padding: 28px;
+        border: 1px solid rgba(110, 85, 65, 0.1);
+        box-shadow: 0 20px 40px rgba(60, 40, 30, 0.36),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06); /* soft depth + paper sheen */
+        -webkit-font-smoothing: antialiased;
+        backdrop-filter: blur(3px) saturate(1.05);
+        transition: opacity 0.45s ease,
+          transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
+        transform: translateY(8px);
+        will-change: opacity, transform;
       }
 
       #start-inner {
         padding: 10px 60px;
         border-radius: 100px;
         text-align: center;
+        margin-top: -60px; /* move up */
       }
 
       #start-inner h1 {
-        font-size: 5rem;
+        font-size: 3rem;
         color: #956c52;
         margin-bottom: 20px;
         margin-left: 50px;
+        line-height: 1.5;
         font-family: "Playwrite CZ", cursive;
       }
 
       #start-inner p {
         font-size: 1rem;
         color: #826755;
-        width: 400px;
+        width: 500px;
         text-align: center;
-        margin-bottom: 10px;
+        padding-top: 10px;
+        margin-bottom: 30px;
         margin-left: 45px;
       }
 
       #start-btn {
         font-size: 1.2rem;
-        padding: 12px 80px;
+        padding-top: 12px;
+        padding-bottom: 12px;
         border-radius: 999px;
         margin-left: 45px;
         border: none;
@@ -117,6 +140,7 @@
         padding: 60px 80px;
         border-radius: 22px;
         text-align: center;
+        height: auto;
       }
 
       #narrative-text {
@@ -157,7 +181,24 @@
         z-index: 9998;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+        /* cozy vintage treatment */
+        background-color: rgba(
+          249,
+          241,
+          232,
+          0.86
+        ); /* warm paper tint over the photo */
+        background-blend-mode: overlay;
+        padding: 28px;
+        border: 1px solid rgba(110, 85, 65, 0.1);
+        box-shadow: 0 20px 40px rgba(60, 40, 30, 0.36),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06); /* soft depth + paper sheen */
+        -webkit-font-smoothing: antialiased;
+        backdrop-filter: blur(3px) saturate(1.05);
+        transition: opacity 0.45s ease,
+          transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
+        transform: translateY(8px);
+        will-change: opacity, transform;
       }
 
       #menu-screen.active {
@@ -168,6 +209,7 @@
       #menu-inner {
         text-align: center;
         margin-bottom: 40px;
+        padding-bottom: 40px;
       }
 
       #menu-inner h2 {
@@ -182,7 +224,7 @@
         gap: 20px;
         flex-wrap: wrap;
         justify-content: center;
-        width: 760px;
+        width: 900px;
       }
 
       .menu-thumb {
@@ -200,6 +242,16 @@
         transform: translateY(-5px);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
         border: #fffaf2 2px solid;
+      }
+
+      .menu-thumb.locked::after {
+        content: "🔒";
+        font-size: 2rem;
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       /* -------------------------------------------------------------
@@ -313,7 +365,7 @@
 
       #left-panel-title {
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 800;
         color: #826755;
         margin-bottom: 8px;
         padding-top: 10px;
@@ -324,6 +376,8 @@
         width: 100%;
         padding: 12px 15px;
         font-size: 0.8rem;
+        font-weight: 600;
+        font-family: "Nunito", sans-serif;
         background: rgba(255, 255, 255, 0.7);
         border-radius: 10px;
         border-bottom-left-radius: 0px;
@@ -513,6 +567,7 @@
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
+        width: 260px;
       }
 
       .level3-zone {
@@ -534,12 +589,13 @@
       }
 
       .level4-zone {
-        width: 380px !important;
+        width: 540px !important;
         min-height: 50px !important;
         max-height: 70px !important;
         border-radius: 12px;
         display: flex;
         align-items: flex-start;
+        background: rgba(246, 246, 246, 0.34);
       }
 
       /* Level 5 dropzones */
@@ -550,15 +606,52 @@
       }
 
       .level5-closet {
-        width: 320px !important;
+        width: 300px !important;
         min-height: 600px !important;
         border-radius: 14px;
+        display: flex;
+        flex-direction: column; /* or row depending on layout */
+        gap: 50px; /* adjust spacing here */
+        align-items: center;
       }
 
       .level6-trigger-zone {
         width: 610px !important;
         height: 540px !important;
         border-radius: 3000px;
+      }
+
+      .level7-iconzone {
+        width: 120px !important;
+        height: 120px !important;
+        min-width: 100px !important; /* ← override global */
+        min-height: 100px !important; /* ← override global */
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: visible;
+      }
+
+      /* Level 8 — special square dropzone */
+      .level8-square {
+        width: 180px !important;
+        height: 180px !important;
+        min-width: 180px !important;
+        min-height: 180px !important;
+        background: rgba(230, 230, 230, 0.18);
+        border-radius: 2000px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Make placed items fill the Level 8 dropzones */
+      .level8-square .draggable img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain; /* prevents distortion */
       }
       /* -------------------------------------------------------------
        CONTROLS
@@ -656,6 +749,12 @@
         border: 1px solid rgba(0, 0, 0, 0.25);
       }
 
+      .heritage-segment {
+        height: 100%;
+        display: block;
+        transition: width 0.4s ease;
+      }
+
       /* -------------------------------------------------------------
        FINAL SUMMARY
     ------------------------------------------------------------- */
@@ -713,23 +812,362 @@
       #draggables.panel-large {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       }
+
+      .heritage-segment[data-key="global"] {
+        background-image: repeating-linear-gradient(
+          45deg,
+          #e8d5c4 0 12px,
+          /* warm beige */ #c7d9d4 12px 24px,
+          /* sage pastel */ #d9cce3 24px 36px,
+          /* muted lavender */ #f4e3cd 36px 48px,
+          /* creamy tan */ #cfd8e8 48px 60px,
+          /* soft dusty blue */ #ead6e0 60px 72px /* powdered rose */
+        );
+      }
+
+      /* ----------------------------New ideas--------------------------------- */
+      /* -------------------------------------------------------------
+   SOFT • COZY • PASTEL • HAND-DRAWN BUTTONS (subtle version)
+------------------------------------------------------------- */
+
+      button,
+      #start-btn,
+      #next-btn,
+      #narrative-btn {
+        font-family: inherit !important;
+
+        /* Soft pastel background */
+        background: #f7f3f0 !important;
+        background: linear-gradient(135deg, #f9f4f2, #f6f5fa) !important;
+
+        /* Very soft hand-drawn border */
+        border: 1.8px solid rgba(140, 110, 90, 0.35) !important;
+        border-radius: 18px !important;
+
+        /* Gentle baby-shadow, fuzzy like pencil */
+        box-shadow: 1px 2px 4px rgba(90, 70, 55, 0.15) !important;
+
+        padding: 10px 38px !important;
+
+        color: #6a594d !important;
+        cursor: pointer;
+
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          background 0.12s ease;
+      }
+
+      /* Soft hover — no wobbling, only gentle lift */
+      button:hover,
+      #start-btn:hover,
+      #narrative-btn:hover,
+      #next-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #f6f1ef, #f4f2f9) !important;
+        box-shadow: 2px 3px 6px rgba(80, 60, 45, 0.18) !important;
+      }
+
+      /* Pressed state — soft, cozy squash */
+      button:active,
+      #start-btn:active,
+      #narrative-btn:active,
+      #next-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0px 1px 2px rgba(70, 55, 40, 0.18) !important;
+      }
+
+      /* Disabled — faint, muted, soft */
+      #next-btn:disabled {
+        background: #eee8e3 !important;
+        border-color: rgba(150, 130, 115, 0.25) !important;
+        color: #a09188 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        cursor: not-allowed !important;
+      }
+
+      /* Subtle hand-drawn outline effect */
+      button::after,
+      #start-btn::after,
+      #narrative-btn::after,
+      #next-btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transform: translate(1.5px, 1px) rotate(0.6deg);
+        pointer-events: none;
+        opacity: 0.4;
+      }
+
+      /* -------------------------------------------------------------
+   SOFT • COZY • PASTEL SUMMARY POPUP (Your Heritage Mix)
+------------------------------------------------------------- */
+
+      #summary {
+        display: none; /* controlled by JS */
+        max-width: 450px;
+        margin: 40px auto;
+
+        /* Soft pastel paper */
+        background: linear-gradient(135deg, #fdf9f4 0%, #faf6f1 100%);
+        border-radius: 24px;
+        padding: 32px 40px;
+
+        /* Soft hand-drawn border */
+        border: 2px solid rgba(140, 110, 90, 0.25);
+        box-shadow: 0 8px 20px rgba(80, 60, 45, 0.12),
+          inset 0 1px 3px rgba(255, 255, 255, 0.6);
+
+        text-align: center;
+        color: #6b5445;
+
+        /* fade-in */
+        opacity: 0;
+        transform: translateY(10px);
+        animation: summaryFade 0.6s ease forwards;
+      }
+
+      @keyframes summaryFade {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #summary h2 {
+        font-family: "Playwrite CZ", cursive;
+        font-size: 2rem;
+        color: #8a6a52;
+        margin-bottom: 20px;
+
+        /* soft glow */
+        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      /* List styling */
+      #summary ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #summary li {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1.5px dashed rgba(120, 95, 80, 0.35);
+        border-radius: 999px;
+        padding: 10px 16px;
+
+        font-size: 1.05rem;
+        color: #6a564c;
+        letter-spacing: 0.3px;
+
+        display: flex;
+        justify-content: space-between;
+
+        /* hand-drawn subtle shadow */
+        box-shadow: 1px 2px 4px rgba(70, 55, 40, 0.1);
+      }
+
+      /* Optional: small heritage swatch next to each item */
+      #summary li::before {
+        content: "";
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        margin-right: 10px;
+        background: var(--heritage-color, #ddd);
+      }
+
+      /* ================================
+   NARRATIVE — CENTERED LAYOUT
+================================ */
+      /* BACKDROP */
+      #narrative-screen {
+        position: fixed;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      #narrative-screen.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* NARRATIVE CARD */
+      #narrative-inner {
+        position: relative;
+        width: 600px;
+        max-width: 600px;
+        height: 530px; /* fixed height → stable layout */
+        border-radius: 24px;
+        padding: 40px 40px 80px; /* space for button */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* TEXT BOX — fixed height */
+      #narrative-text-wrapper {
+        flex: 1; /* take all available vertical space */
+        display: flex;
+        justify-content: center; /* vertical centering */
+        align-items: center; /* horizontal centering */
+        overflow-y: auto; /* scroll only if too long */
+        text-align: center;
+        padding: 0 10px;
+      }
+
+      /* Actual text */
+      #narrative-text {
+        font-size: 1.35rem;
+        line-height: 1.55;
+        color: #f5f2e8;
+        max-width: 480px;
+      }
+
+      #narrative-btn {
+        width: 30% !important; /* ← keeps button size natural */
+        display: inline-block !important;
+        padding: 12px 36px !important; /* use your preferred padding */
+      }
+
+      /* ============================================================
+   WIDE SCREEN MODE — ONLY APPLY IF SCREEN IS > 1600px
+   ============================================================ */
+      @media screen and (min-width: 1600px) {
+        body {
+          background: linear-gradient(135deg, #f1e7dd, #e9ded3);
+          padding: 50px;
+        }
+
+        #ui-frame {
+          width: 100vw;
+          height: 100vh;
+
+          max-width: 1500px; /* the “box” size */
+          max-height: 900px; /* or whatever height you want */
+
+          margin: auto;
+          border: 8px solid rgba(150, 120, 100, 0.35);
+          border-radius: 24px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+        }
+
+        #ui {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          overflow: hidden;
+        }
+
+        #tree-bg {
+          position: absolute; /* was fixed – wrong for the frame */
+          inset: 0;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          z-index: 0;
+          opacity: 0.9;
+          pointer-events: none;
+        }
+
+        #ui {
+          position: relative;
+          z-index: 1000 !important;
+        }
+
+        #controls,
+        #next-btn,
+        #board,
+        #left-panel,
+        header,
+        footer {
+          position: relative;
+          z-index: 1100 !important;
+        }
+
+        #tree-bg,
+        #paper-grain {
+          position: absolute !important;
+        }
+
+        /* BACKGROUNDS — lowest */
+        #tree-bg,
+        #paper-grain {
+          position: absolute !important;
+          z-index: 0 !important;
+        }
+
+        /* DROPZONES — middle layer */
+        #dropzones {
+          position: absolute !important;
+          z-index: 50 !important;
+          pointer-events: none; /* only individual dropzones are interactive */
+        }
+
+        #dropzones .dropzone {
+          position: absolute;
+          z-index: 60 !important;
+          pointer-events: auto; /* allow drag & drop */
+        }
+
+        /* UI — highest */
+        #ui {
+          position: relative;
+          z-index: 100 !important;
+        }
+
+        #controls,
+        #next-btn,
+        #board,
+        #left-panel,
+        header,
+        footer {
+          position: relative;
+          z-index: 120 !important;
+        }
+      }
     </style>
   </head>
   <body>
     <!-- Start screen -->
     <div id="start-screen">
       <div id="start-inner">
-        <h1>fernweh</h1>
-
-        <button id="start-btn">Play</button>
-        <p><br /><br /><br /><br /></p>
+        <h1>
+          Born<br />
+          of <br />
+          Many Places
+        </h1>
+        <p>A game about heritage, identity, and the memories we collect.</p>
+        <button id="start-btn">Open</button>
       </div>
     </div>
 
     <div id="narrative-screen">
       <div id="narrative-inner">
-        <p id="narrative-text"></p>
-        <button id="narrative-btn">Continue →</button>
+        <div id="narrative-text-wrapper">
+          <p id="narrative-text"></p>
+        </div>
+
+        <button id="narrative-btn">Continue</button>
       </div>
     </div>
 
@@ -740,51 +1178,72 @@
       </div>
     </div>
 
-    <!-- Background Layers -->
-    <div id="tree-bg"></div>
-    <div id="paper-grain"></div>
+    <button
+      id="mute-btn"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border: 2px solid rgba(120, 95, 80, 0.4);
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      🔊
+    </button>
 
-    <!-- UI -->
-    <div id="ui">
-      <!-- <header>
-      <h1>Heritage Mixer</h1>
-      <p>Place the memories where they feel at home.</p>
-    </header> -->
+    <audio id="bg-music" loop preload="auto">
+      <source src="/assets/bg-music.mp3" type="audio/mpeg" />
+    </audio>
 
-      <main>
-        <section id="board">
-          <!-- Left Panel -->
-          <div id="left-panel">
-            <button id="panel-toggle">Memories</button>
-            <div id="draggables"></div>
+    <audio id="pop-sound" preload="auto">
+      <source src="assets/pop.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div id="ui-frame">
+      <!-- UI -->
+      <div id="ui">
+        <!-- Background Layers -->
+        <div id="tree-bg"></div>
+        <div id="paper-grain"></div>
+        <main>
+          <section id="board">
+            <!-- Left Panel -->
+            <div id="left-panel">
+              <button id="panel-toggle">☰ Memories</button>
+              <div id="draggables"></div>
+            </div>
+          </section>
+
+          <section id="controls">
+            <div id="progress"></div>
+            <button id="next-btn" disabled>Lock in</button>
+          </section>
+
+          <section id="summary"></section>
+        </main>
+
+        <footer id="heritage-footer">
+          <div id="heritage-bar-wrapper">
+            <div id="heritage-bar"></div>
           </div>
-        </section>
 
-        <section id="controls">
-          <div id="progress"></div>
-          <button id="next-btn" disabled>Lock in →</button>
-        </section>
-
-        <section id="summary"></section>
-      </main>
-
-      <footer id="heritage-footer">
-        <div id="heritage-bar-wrapper">
-          <div id="heritage-bar"></div>
-        </div>
-
-        <div id="heritage-legend"></div>
-      </footer>
+          <div id="heritage-legend"></div>
+        </footer>
+      </div>
     </div>
 
     <!-- Dropzones Layer -->
     <div id="dropzones"></div>
 
     <script>
-      /* -------------------------------------------------------------
-                       JAVASCRIPT (CLEAN, REWRITTEN)
-      ------------------------------------------------------------- */
-
       /* === Heritage Definitions === */
       const HERITAGES = [
         { key: "hungarian", label: "Hungarian", color: "#d78f88" },
@@ -792,6 +1251,11 @@
         { key: "italian", label: "Italian", color: "#91b497" },
         { key: "russian", label: "Russian", color: "#a892c4" },
         { key: "svab", label: "Sváb", color: "#e4c27a" },
+        {
+          key: "global",
+          label: "Global",
+          color: "#ccc",
+        },
       ];
 
       let heritagePoints = {
@@ -800,22 +1264,29 @@
         italian: 0,
         russian: 0,
         svab: 0,
+        global: 0,
       };
 
       /* === Levels === */
       const LEVELS = [
+        /* ============================
+       LEVEL 1  (Birth Cert)
+  ============================ */
         {
           id: 1,
           background: "backgrounds/birth_cert.png",
           maxPerZone: Infinity,
           elements: [
-            { id: "anna", image: "assets/anna.png" },
-            { id: "nina", image: "assets/nina.png" },
-            { id: "toro", image: "assets/toro.png" },
+            { id: "anna", image: "assets/anna.png", heritage: "hungarian" },
+            { id: "nina", image: "assets/nina.png", heritage: "russian" },
+            { id: "toro", image: "assets/toro.png", heritage: "hungarian" },
           ],
-          dropzones: [{ id: "dzAnna", x: 57, y: 44 }],
+          dropzones: [{ id: "dzAnna", x: 59, y: 44 }],
         },
 
+        /* ============================
+       LEVEL 2  (VHS Shelf)
+  ============================ */
         {
           id: 2,
           background: "backgrounds/shelf.png",
@@ -834,6 +1305,34 @@
           dropzones: [{ id: "vhsZone", xLeft: 18, y: 32 }],
         },
 
+        /* ============================
+       LEVEL 5  (Closet + Puppet)
+  ============================ */
+        {
+          id: 5,
+          background: "backgrounds/closet.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "hunCloth",
+              image: "assets/hungarian-folkclothing.png",
+              heritage: "hungarian",
+            },
+            {
+              id: "svabCloth",
+              image: "assets/svab-folkclothing.png",
+              heritage: "svab",
+            },
+          ],
+          dropzones: [
+            { id: "dzPuppet", x: 31.5, y: 56 },
+            { id: "dzCloset", x: 69, y: 52 },
+          ],
+        },
+
+        /* ============================
+       LEVEL 3  (Christmas Tree)
+  ============================ */
         {
           id: 3,
           background: "backgrounds/christmas_tree.png",
@@ -856,6 +1355,32 @@
           ],
         },
 
+        /* ============================
+       LEVEL 7  (Garden Icons)
+  ============================ */
+        {
+          id: 7,
+          background: "backgrounds/garden.png",
+          maxPerZone: 1,
+          elements: [
+            { id: "panda", image: "assets/panda-icon.png", heritage: "global" },
+            {
+              id: "bear",
+              image: "assets/bear-icon.png",
+              heritage: "szekely",
+            },
+            {
+              id: "wolt",
+              image: "assets/wolt-icon.png",
+              heritage: "hungarian",
+            },
+          ],
+          dropzones: [{ id: "dzIcon", x: 58, y: 24.8 }],
+        },
+
+        /* ============================
+       LEVEL 4  (Bar / Drinks)
+  ============================ */
         {
           id: 4,
           background: "backgrounds/bar.png",
@@ -875,58 +1400,87 @@
             { id: "dzSoda", x: 70, y: 62 },
           ],
         },
-        {
-          id: 5,
-          background: "backgrounds/closet.png",
-          maxPerZone: 1,
-          elements: [
-            { id: "hunCloth", image: "assets/hungarian-folkclothing.png" },
-            {
-              id: "svabCloth",
-              image: "assets/svab-folkclothing.png",
-            },
-          ],
-          dropzones: [
-            { id: "dzPuppet", x: 34, y: 56 },
-            { id: "dzCloset", x: 72, y: 52 },
-          ],
-        },
+
+        /* ============================
+       LEVEL 6  (Pizza Tools)
+  ============================ */
         {
           id: 6,
           background: "backgrounds/pizza-on-table.png",
           maxPerZone: 1,
           elements: [
-            { id: "knife", image: "assets/knife.png" },
+            { id: "knife", image: "assets/knife.png", heritage: "global" },
             {
               id: "pizzaCutter",
               image: "assets/pizza-cutter.png",
+              heritage: "hungarian",
             },
-            { id: "scissor", image: "assets/scissor.png" },
+            { id: "scissor", image: "assets/scissor.png", heritage: "italian" },
           ],
-          dropzones: [{ id: "dzTrigger", x: 59, y: 42 }],
+          dropzones: [{ id: "dzTrigger", x: 54, y: 42 }],
+        },
+
+        /* ============================
+       LEVEL 8  (Desk + Foods)
+  ============================ */
+        {
+          id: 8,
+          background: "backgrounds/desk3.png",
+          maxPerZone: 1,
+          elements: [
+            {
+              id: "spagetti",
+              image: "assets/spegetti.png",
+              heritage: "italian",
+            },
+
+            { id: "vineta", image: "assets/vineta.png", heritage: "szekely" },
+            {
+              id: "pelmeni",
+              image: "assets/pelmeni.png",
+              heritage: "russian",
+            },
+            {
+              id: "vinigret",
+              image: "assets/vinigret.png",
+              heritage: "russian",
+            },
+            { id: "mititei", image: "assets/mititei.png", heritage: "szekely" },
+            { id: "gulyas", image: "assets/gulyas.png", heritage: "hungarian" },
+          ],
+          dropzones: [
+            { id: "dzTable1", x: 51, y: 15 },
+            { id: "dzTable2", x: 51, y: 72 },
+            { id: "dzTable3", x: 35.5, y: 48 },
+            { id: "dzTable4", x: 66.6, y: 48 },
+          ],
         },
       ];
 
+      let preMenuIndex = 0;
+
       /* Narratives between levels */
-      const PRE_MENU_TEXT =
-        "Every story begins somewhere… before you dive into your memories, open the book and choose where to start.";
+      const PRE_MENU = [
+        "I love to have a structure, to have my things and thoughts in order. I love labeling things, categorizing them, putting them in boxes. But sometimes, life is not that simple. Sometimes, things don’t fit neatly into one box.",
+        "When I tried to define my identity, everything felt blurry. What is my culture? What is my heritage? Where do I belong? I can’t say I’m fully Hungarian, but I also can’t claim a perfect mix of two nationalities. So how do we define identity? By language? By where we live? By our blood, our memories, or something else entirely?",
+        "I tried to showcase my dilemma with this cozy puzzle game. This is a game about heritage, identity, and the memories I collected along the way.",
+        "Are you ready to explore it?",
+      ];
 
       const NARRATIVE = {
-        0: "Heritage is the stories we grow up with, shaping how we see the world and ourself in it.",
-        1: "Some memories sit next to each other like tapes on an old shelf…",
-        2: "Life’s small rituals—like mixing a drink—carry heritage too.",
-        3: "Stories change shape depending on where they come from…",
-        4: "Music echoes through generations, changing but never disappearing.",
-        5: "Homes decorate themselves with memories of the people inside.",
-        6: "School days mark us with discipline, laughter, and winter walks.",
-        7: "Holidays whisper ancient traditions into the present.",
-        8: "Every neighbourhood has its rhythm, its benches, its bakery smell.",
-        9: "Markets carry smells that remind you of places you’ve never been.",
-        10: "Languages tell the story of where your voice has travelled.",
-        11: "Dreams of home mix all your pasts into your future.",
+        0: "I was born with two names, one from my hungarian grandmother, and one from my russian grandmother. This would indicate two heritages. Do I really belong to both? I don't even speak russian...",
+        1: "But I grew up watching russian cartoons, and eating russian food. So maybe I do belong to both after all?",
+        2: "I went to a german national bilingual school, where I learned about my sváb (ungarndeutsche) heritage, what came from my great-grandmother. I sang in the national choir, and learned folk dances. I tried the hungarian ones too, but hated them then. I hid my folk clothes in the back of the closet. Does it make me less hungarian?",
+        3: "As I spent more and more time away from home, I grew away from my russian roots. But it stayed still with me and my family during the most special time of the year: Christmas.",
+        4: "Later, I moved to Transylvania, Romania. They speak hungarian there, but their culture is different. They have their own traditions, food, and way of life. They call themselves Székelys. I spent there two years of my life, I started speak like them, behave like them, but did I become one of them? I have never been to Russia, so am I more Székely than Russian now?",
+        5: "Moving from Hungary made me realize how much I'm hungarian after all. When I moved to Italy I experienced such differencies I took for granted back home. Once I even taught a bartender how to make a proper fröccs!",
+        6: "But if I can be more székely than russian, it's not about blood or passport. If I pick up traditions, language, food, and memories from a place, does it make me part of that culture? Can I choose my heritage, for example be Italian? ",
+        7: "After all, identity is fluid. It changes with time, place, and experience. It's not about fitting into a box, but about embracing the complexity of who we are. All these cultures, memories, and experiences make me who I am today.",
+        8: "But society loves boxes, and so do I. So I choose to fit in all these boxes at once. Because I am born of many places.",
       };
 
       let currentLevel = 0;
+      let unlockedLevels = 1;
       let placements = {};
       let zoneContents = {};
 
@@ -945,7 +1499,9 @@
           const seg = document.createElement("div");
           seg.className = "heritage-segment";
           seg.dataset.key = h.key;
-          seg.style.background = h.color;
+          if (h.key !== "global") {
+            seg.style.background = h.color;
+          }
           seg.style.width = "0%"; // animate from 0
           bar.appendChild(seg);
 
@@ -962,7 +1518,30 @@
         updateBar();
       }
 
+      function applyHeritagePointsForLevel(level) {
+        // Loop through all placed items
+        for (const itemId in placements) {
+          const dz = placements[itemId];
+          if (!dz) continue; // item not placed
+
+          // Get the draggable element
+          const el = document.querySelector(`.draggable[data-id="${itemId}"]`);
+          if (!el) continue;
+
+          const heritage = el.dataset.heritage;
+
+          // Skip global items or items without heritage
+          if (!heritage) continue;
+
+          // Award points
+          if (heritagePoints.hasOwnProperty(heritage)) {
+            heritagePoints[heritage] += 1; // adjust scale if needed
+          }
+        }
+      }
+
       function updateBar() {
+        console.log("heritagePoints:", heritagePoints);
         const total =
           Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
@@ -995,9 +1574,22 @@
           thumb.className = "menu-thumb";
           thumb.style.backgroundImage = `url(${lvl.background})`;
 
-          thumb.onclick = () => {
-            startLevelFromMenu(index);
-          };
+          // LOCKED STATE
+          if (index >= unlockedLevels) {
+            thumb.style.filter = "grayscale(100%) brightness(60%)";
+            thumb.style.cursor = "not-allowed";
+            thumb.style.opacity = "0.5";
+            thumb.classList.add("locked");
+
+            // prevent clicking locked levels
+            thumb.onclick = () => {};
+          }
+          // UNLOCKED STATE
+          else {
+            thumb.onclick = () => {
+              startLevelFromMenu(index);
+            };
+          }
 
           wrap.appendChild(thumb);
         });
@@ -1008,29 +1600,86 @@
         document.getElementById("menu-screen").classList.add("active");
       }
 
+      function showLevelIntro(levelIndex) {
+        const screen = document.getElementById("narrative-screen");
+        const textEl = document.getElementById("narrative-text");
+
+        textEl.innerHTML = NARRATIVE[levelIndex] || "";
+        screen.classList.add("active");
+
+        document.getElementById("narrative-btn").onclick = () => {
+          screen.classList.remove("active");
+          loadLevel(levelIndex); // ⭐ Now it loads the level
+        };
+      }
+
       function startLevelFromMenu(levelIndex) {
         currentLevel = levelIndex;
-
         document.getElementById("menu-screen").classList.remove("active");
 
-        // Option A: show narrative before level
-        showNarrative(levelIndex);
-
-        // Option B (skip narrative):
-        // loadLevel(levelIndex);
+        // ⭐ Show intro narrative before each level
+        showLevelIntro(levelIndex);
       }
 
       function showPreMenuNarrative() {
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
 
-        textEl.textContent = PRE_MENU_TEXT;
+        // Show current intro text
+        textEl.innerHTML = PRE_MENU[preMenuIndex];
         screen.classList.add("active");
 
         document.getElementById("narrative-btn").onclick = () => {
-          screen.classList.remove("active");
-          showMenu(); // ✨ then go to the menu
+          preMenuIndex++;
+
+          // 👉 If more intros remain → show next intro
+          if (preMenuIndex < PRE_MENU.length) {
+            showPreMenuNarrative();
+          }
+          // 👉 If finished → go to menu
+          else {
+            screen.classList.remove("active");
+            showMenu();
+          }
         };
+      }
+
+      /* ============================================================
+      BACKGROUND MUSIC + MUTE BUTTON
+============================================================ */
+
+      const bgMusic = document.getElementById("bg-music");
+      const muteBtn = document.getElementById("mute-btn");
+
+      let musicStarted = false;
+      let isMuted = false;
+
+      // Play music only after start button is pressed
+      function startMusic() {
+        if (!musicStarted) {
+          bgMusic.volume = 0.4; // soft volume
+          bgMusic.play().catch(() => {
+            console.warn("Autoplay blocked until user interacts.");
+          });
+          musicStarted = true;
+        }
+      }
+
+      // Toggle mute state
+      muteBtn.addEventListener("click", () => {
+        isMuted = !isMuted;
+
+        bgMusic.muted = isMuted;
+        muteBtn.textContent = isMuted ? "🔇" : "🔊";
+      });
+
+      const popSound = document.getElementById("pop-sound");
+
+      function playPop() {
+        if (!isMuted) {
+          popSound.currentTime = 0; // restart if played rapidly
+          popSound.play().catch(() => {});
+        }
       }
 
       /* -------------------------------------------------------------
@@ -1046,7 +1695,7 @@
           "tree-bg"
         ).style.backgroundImage = `url(${level.background})`;
 
-        document.getElementById("progress").textContent = `Step ${i + 1}/${
+        document.getElementById("progress").textContent = `Scene ${i + 1}/${
           LEVELS.length
         }`;
 
@@ -1058,7 +1707,7 @@
         const panel = document.getElementById("draggables");
         panel.classList.remove("panel-large"); // reset first
 
-        if ([1, 3, 5, 6].includes(level.id)) {
+        if ([1, 3, 5, 6, 7, 8].includes(level.id)) {
           panel.classList.add("panel-large");
         }
 
@@ -1099,7 +1748,14 @@
             dz.classList.add("level4-zone");
           }
 
-          // Level 1 has a left-anchored dropzone (VHS shelf)
+          // LEVEL 7 — special icon dropzone
+          if (level.id === 7) {
+            if (z.id === "dzIcon") {
+              dz.classList.add("level7-iconzone");
+            }
+          }
+
+          // level 2 has a left-anchored dropzone (VHS shelf)
           if (level.id === 2 && z.xLeft !== undefined) {
             dz.style.left = z.xLeft + "%";
             dz.style.top = z.y + "%";
@@ -1131,6 +1787,18 @@
             }
           }
 
+          // LEVEL 8 — special square dropzones
+          if (level.id === 8) {
+            if (
+              z.id === "dzTable1" ||
+              z.id === "dzTable2" ||
+              z.id === "dzTable3" ||
+              z.id === "dzTable4"
+            ) {
+              dz.classList.add("level8-square");
+            }
+          }
+
           dz.addEventListener("dragover", dragOver);
           dz.addEventListener("dragleave", dragLeave);
           dz.addEventListener("drop", dropItem);
@@ -1138,79 +1806,17 @@
           zwrap.appendChild(dz);
         });
 
-        document.getElementById("next-btn").disabled = true;
+        document.getElementById("next-btn").disabled = !anyZoneHasItems();
       }
 
       /* -------------------------------------------------------------
-   DRAG & DROP (REWRITTEN, UNIFIED SYSTEM)
-------------------------------------------------------------- */
-
-      // Move item to the panel
-      function moveItemToPanel(itemId, itemEl) {
-        const oldZone = placements[itemId];
-
-        // remove from old zone if necessary
-        if (oldZone) {
-          zoneContents[oldZone] = zoneContents[oldZone].filter(
-            (id) => id !== itemId
-          );
-        }
-
-        placements[itemId] = null;
-
-        const panel = document.getElementById("draggables");
-        panel.appendChild(itemEl);
-        itemEl.classList.remove("on-board", "in-puppet-zone");
-      }
-
-      // Move item to zone (standard case)
-      function moveItemToZone(itemId, zoneId, itemEl) {
-        // If coming from another zone → remove from it
-        if (placements[itemId]) {
-          const old = placements[itemId];
-          zoneContents[old] = zoneContents[old].filter((i) => i !== itemId);
-        }
-
-        // Add to new zone
-        placements[itemId] = zoneId;
-        zoneContents[zoneId].push(itemId);
-
-        const zoneEl = document.querySelector(`.dropzone[data-id="${zoneId}"]`);
-        zoneEl.appendChild(itemEl);
-        itemEl.classList.add("on-board");
-
-        // Level 5 puppet size
-        if (zoneId === "dzPuppet") itemEl.classList.add("in-puppet-zone");
-        else itemEl.classList.remove("in-puppet-zone");
-
-        document.getElementById("next-btn").disabled = false;
-      }
-
-      // Swap existing item with dragged item
-      function swapItems(existingId, newId, zoneId, newItemEl) {
-        const zoneEl = document.querySelector(`.dropzone[data-id="${zoneId}"]`);
-
-        // 1. Find DOM element of existing item
-        const existingEl = document.querySelector(
-          `.draggable[data-id="${existingId}"]`
-        );
-
-        // 2. Move existing item back to its previous place (panel)
-        moveItemToPanel(existingId, existingEl);
-
-        // 3. Move new item into the zone
-        zoneContents[zoneId] = []; // clear
-        moveItemToZone(newId, zoneId, newItemEl);
-      }
+                       DRAG & DROP
+       ------------------------------------------------------------- */
 
       let draggedId = null;
-      let draggedFromZone = null;
 
       function dragStart(ev) {
         draggedId = ev.target.dataset.id;
-
-        // Where item currently is:
-        draggedFromZone = placements[draggedId] || null;
       }
 
       function dragOver(ev) {
@@ -1222,64 +1828,420 @@
         this.classList.remove("dropping");
       }
 
+      function insertAtPosition(container, draggedEl, event) {
+        const children = [...container.querySelectorAll(".draggable")].filter(
+          (c) => c !== draggedEl
+        );
+
+        if (children.length === 0) {
+          container.appendChild(draggedEl);
+          return;
+        }
+
+        const dropX = event.clientX;
+
+        for (const child of children) {
+          const rect = child.getBoundingClientRect();
+
+          // If mouse is left of child → insert before that child
+          if (dropX < rect.left + rect.width / 2) {
+            container.insertBefore(draggedEl, child);
+            return;
+          }
+        }
+
+        // Otherwise append at the end
+        container.appendChild(draggedEl);
+      }
+
+      function zoneHas(zoneId, itemId) {
+        return zoneContents[zoneId] && zoneContents[zoneId].includes(itemId);
+      }
+
+      function applyFoldedVersion(itemEl) {
+        const id = itemEl.dataset.id;
+        const img = itemEl.querySelector("img");
+        if (!img) return;
+
+        if (id === "hunCloth") {
+          img.src = "assets/hun-cloth-folded.png";
+        } else if (id === "svabCloth") {
+          img.src = "assets/svab-cloth-folded.png";
+        }
+      }
+
+      function applyUnfoldedVersion(itemEl) {
+        const id = itemEl.dataset.id;
+        const img = itemEl.querySelector("img");
+        if (!img) return;
+
+        if (id === "hunCloth") {
+          img.src = "assets/hungarian-folkclothing.png";
+        } else if (id === "svabCloth") {
+          img.src = "assets/svab-folkclothing.png";
+        }
+      }
+
+      function swapIntoZone(dzEl, newItemEl, dzid) {
+        const panel = document.getElementById("draggables");
+
+        // find the existing item
+        const existingItems = zoneContents[dzid] || [];
+        if (existingItems.length === 0) return false;
+
+        const oldItemId = existingItems[0];
+        const oldItemEl = document.querySelector(
+          `.draggable[data-id="${oldItemId}"]`
+        );
+        if (!oldItemEl) return false;
+
+        // Move old item back to panel
+        panel.appendChild(oldItemEl);
+        oldItemEl.classList.remove("on-board");
+        playPop(); // ← ADD HERE
+
+        // Update bookkeeping
+        zoneContents[dzid] = [];
+        placements[oldItemId] = null;
+
+        // Place new item visually
+        dzEl.appendChild(newItemEl);
+        newItemEl.classList.add("on-board");
+
+        // Update bookkeeping for new item
+        zoneContents[dzid] = [newItemEl.dataset.id];
+        placements[newItemEl.dataset.id] = dzid;
+
+        return true;
+      }
+
+      function anyZoneHasItems() {
+        return Object.values(zoneContents).some((arr) => arr && arr.length > 0);
+      }
+
       function dropItem(ev) {
         ev.preventDefault();
         this.classList.remove("dropping");
 
+        // --- ALWAYS clean previous zone bookkeeping ---
         const dzid = this.dataset.id;
         const level = LEVELS[currentLevel];
-
-        const itemEl = document.querySelector(
-          `.draggable[data-id="${draggedId}"]`
+        // --- REBUILD zoneContents[dzid] to match what is visually there ---
+        const currentChildren = [...this.querySelectorAll(".draggable")].map(
+          (d) => d.dataset.id
         );
+        zoneContents[dzid] = currentChildren;
 
-        // --- STEP 1: If dropped on PANEL, return item to panel ---
-        if (!dzid) {
-          moveItemToPanel(draggedId, itemEl);
+        const oldZone = placements[draggedId];
+        if (oldZone && oldZone !== dzid) {
+          if (zoneContents[oldZone]) {
+            zoneContents[oldZone] = zoneContents[oldZone].filter(
+              (id) => id !== draggedId
+            );
+          }
+        }
+
+        const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
+
+        // === LEVEL 2 VHS===
+        if (level.id === 2) {
+          insertAtPosition(this, el, ev);
+          el.classList.add("on-board");
+          playPop(); // ← ADD HERE
+          const ordered = [...this.querySelectorAll(".draggable")].map(
+            (d) => d.dataset.id
+          );
+          zoneContents[dzid] = ordered;
+          placements = {};
+          ordered.forEach((id) => (placements[id] = dzid));
+          if (Object.keys(placements).length >= 1)
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
           return;
         }
 
-        // Ensure zone array exists
+        // === BAR ===
+        if (level.id === 4) {
+          const dzid = this.dataset.id;
+
+          // --- REBUILD zone contents BEFORE logic ---
+          const existingItems = [...this.querySelectorAll(".draggable")].map(
+            (d) => d.dataset.id
+          );
+          zoneContents[dzid] = existingItems;
+
+          const isWine = draggedId === "wineBottle";
+          const isSoda = draggedId === "soda";
+          const isGlass = draggedId === "glass";
+
+          const hasWine = zoneContents[dzid].includes("wineBottle");
+          const hasSoda = zoneContents[dzid].includes("soda");
+          const hasGlass = zoneContents[dzid].includes("glass");
+
+          console.log("ZONE NOW:", zoneContents[dzid]);
+
+          // ----------------------------------------------------
+          // RULE A — Glass cannot enter if wine or soda already placed
+          // ----------------------------------------------------
+          if (isGlass && (hasWine || hasSoda)) {
+            this.classList.remove("dropping");
+            return;
+          }
+
+          // ----------------------------------------------------
+          // RULE B — If GLASS is present → allow wine + soda freely
+          // (froccs override)
+          // ----------------------------------------------------
+          if (!hasGlass) {
+            // normal blocking rules apply
+            if (isWine && hasSoda) {
+              this.classList.remove("dropping");
+              return;
+            }
+            if (isSoda && hasWine) {
+              this.classList.remove("dropping");
+              return;
+            }
+          }
+
+          // ----------------------------------------------------
+          // PLACE ITEM
+          // ----------------------------------------------------
+          this.appendChild(el);
+          el.classList.add("on-board");
+          playPop();
+
+          // update bookkeeping
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+          zoneContents[dzid].push(draggedId);
+          placements[draggedId] = dzid;
+
+          // ----------------------------------------------------
+          // RULE C — Froccs mixing in glass
+          // ----------------------------------------------------
+          if (hasGlass && (isWine || isSoda)) {
+            applyGlassImageChange(dzid, draggedId);
+            ejectItem(draggedId, dzid); // beverage disappears after mixing
+          }
+
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
+          return;
+        }
+
+        // === LEVEL 5 ===
+        if (level.id === 5) {
+          const dzid = this.dataset.id;
+
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+          const oldZone = placements[draggedId];
+
+          /* ----------------------------------------------------------
+       CASE 1: dzPuppet — MAX 1 ITEM + FULL SWAP
+     ---------------------------------------------------------- */
+          if (dzid === "dzPuppet") {
+            // If puppet has 1 item → always swap (panel OR other dropzone)
+            if (zoneContents[dzid].length === 1) {
+              const oldId = zoneContents[dzid][0];
+              const oldEl = document.querySelector(
+                `.draggable[data-id="${oldId}"]`
+              );
+
+              // return old Puppet item to panel
+              document.getElementById("draggables").appendChild(oldEl);
+              oldEl.classList.remove("on-board");
+              playPop(); // ← ADD HERE
+              oldEl.classList.remove("in-puppet-zone");
+              applyUnfoldedVersion(oldEl);
+
+              // bookkeeping
+              zoneContents[dzid] = [];
+              placements[oldId] = null;
+            }
+
+            // PLACE NEW ITEM INTO PUPPET
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
+            el.classList.add("in-puppet-zone");
+            applyUnfoldedVersion(el);
+
+            zoneContents[dzid] = [draggedId];
+            placements[draggedId] = dzid;
+
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
+            return;
+          }
+
+          /* ----------------------------------------------------------
+       CASE 2: dzCloset — UNLIMITED ITEMS, NO SWAP
+     ---------------------------------------------------------- */
+          if (dzid === "dzCloset") {
+            // PLACE NEW ITEM (no limit, no swap)
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
+            el.classList.remove("in-puppet-zone");
+
+            // FIX: always reset first, then fold (prevents long-hover bug)
+            applyUnfoldedVersion(el);
+            applyFoldedVersion(el);
+
+            zoneContents[dzid].push(draggedId);
+            placements[draggedId] = dzid;
+
+            document.getElementById("next-btn").disabled = !anyZoneHasItems();
+            return;
+          }
+        }
+
+        // === LEVEL 6: special trigger zone ===
+        if (LEVELS[currentLevel].id === 6) {
+          const dzid = this.dataset.id;
+
+          if (dzid === "dzTrigger") {
+            const el = document.querySelector(
+              `.draggable[data-id="${draggedId}"]`
+            );
+
+            // --- Step 1: Activate next button permanently ---
+            level6Activated = true;
+            document.getElementById("next-btn").disabled = false;
+
+            // --- Step 2: Change background once triggered ---
+            document.getElementById("tree-bg").style.backgroundImage =
+              'url("backgrounds/pizza-cut-on-table.png")';
+
+            // --- Step 3: Immediately eject element back to panel ---
+            const panel = document.getElementById("draggables");
+            panel.appendChild(el);
+            el.classList.remove("on-board");
+            playPop(); // ← ADD HERE
+
+            // --- Step 4: Ensure dropzone stays empty in bookkeeping ---
+            placements[draggedId] = null;
+            zoneContents[dzid] = [];
+
+            this.classList.remove("dropping");
+            return; // STOP — trigger zone never accepts items
+          }
+        }
+
+        // === LEVEL 7 — SWAPPABLE SINGLE SLOT ===
+        if (level.id === 7) {
+          const dzid = this.dataset.id;
+          const el = document.querySelector(
+            `.draggable[data-id="${draggedId}"]`
+          );
+
+          if (dzid === "dzIcon") {
+            if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+            const panel = document.getElementById("draggables");
+
+            // --- SWAP IF ONE ITEM EXISTS ---
+            if (zoneContents[dzid].length === 1) {
+              const oldId = zoneContents[dzid][0];
+              const oldEl = document.querySelector(
+                `.draggable[data-id="${oldId}"]`
+              );
+              const oldZone = placements[oldId];
+
+              // Send old item back where it came from
+              if (oldZone && oldZone !== dzid) {
+                const oldZoneEl = document.querySelector(
+                  `.dropzone[data-id="${oldZone}"]`
+                );
+                if (oldZoneEl) {
+                  oldZoneEl.appendChild(oldEl);
+                  zoneContents[oldZone].push(oldId);
+                } else {
+                  panel.appendChild(oldEl);
+                }
+              } else {
+                panel.appendChild(oldEl);
+              }
+
+              zoneContents[dzid] = [];
+              placements[oldId] = oldZone || null;
+            }
+
+            // --- PLACE NEW ITEM ---
+            this.appendChild(el);
+            el.classList.add("on-board");
+            playPop();
+
+            zoneContents[dzid] = [draggedId];
+            placements[draggedId] = dzid;
+
+            // NEXT BUTTON PERMANENTLY ENABLED
+            document.getElementById("next-btn").disabled = false;
+
+            return;
+          }
+        }
+
+        // === LEVEL 8 — Allow only one element; swap if second item is dropped ===
+        if (level.id === 8) {
+          const dzid = this.dataset.id;
+
+          // Ensure array exists
+          if (!zoneContents[dzid]) zoneContents[dzid] = [];
+
+          // If zone already has an item, we swap
+          if (zoneContents[dzid].length === 1) {
+            const existingId = zoneContents[dzid][0];
+            const existingEl = document.querySelector(
+              `.draggable[data-id="${existingId}"]`
+            );
+
+            // Swap: move existing element back to original place of the dragged one
+            const previousZoneId = placements[draggedId];
+
+            if (previousZoneId && previousZoneId !== dzid) {
+              const previousZone = document.querySelector(
+                `.dropzone[data-id="${previousZoneId}"]`
+              );
+              if (previousZone) {
+                previousZone.appendChild(existingEl);
+                zoneContents[previousZoneId].push(existingId);
+              }
+            } else {
+              // If dragged item came from panel → send existing item to panel
+              document.getElementById("draggables").appendChild(existingEl);
+            }
+
+            // Update bookkeeping
+            zoneContents[dzid] = [draggedId];
+            placements[existingId] = previousZoneId || null;
+          } else {
+            // Zone empty → add normally
+            zoneContents[dzid].push(draggedId);
+          }
+
+          // Place the dragged element into zone
+          this.appendChild(el);
+          el.classList.add("on-board");
+          playPop();
+          placements[draggedId] = dzid;
+
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
+          return;
+        }
+
         if (!zoneContents[dzid]) zoneContents[dzid] = [];
 
-        const zoneMax = level.maxPerZone || Infinity;
+        // Add element visually
+        this.appendChild(el);
+        el.classList.add("on-board");
+        playPop();
 
-        // -------------------------------------------------------
-        // STEP 2: If target zone ALLOWS MULTIPLE items
-        // -------------------------------------------------------
-        if (zoneMax > 1 || level.id === 2) {
-          moveItemToZone(draggedId, dzid, itemEl);
-          return;
-        }
+        // Update tracking
+        zoneContents[dzid].push(draggedId);
+        placements[draggedId] = dzid;
 
-        // -------------------------------------------------------
-        // STEP 3: Zone allows ONLY ONE item → SWAP logic
-        // -------------------------------------------------------
-        if (zoneContents[dzid].length === 1) {
-          const existingId = zoneContents[dzid][0];
-          swapItems(existingId, draggedId, dzid, itemEl);
-          return;
-        }
-
-        // -------------------------------------------------------
-        // STEP 4: Zone empty → simple move
-        // -------------------------------------------------------
-        moveItemToZone(draggedId, dzid, itemEl);
+        if (Object.keys(placements).length >= 1)
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
       }
-
-      document
-        .getElementById("draggables")
-        .addEventListener("dragover", (ev) => {
-          ev.preventDefault();
-        });
-
-      document.getElementById("draggables").addEventListener("drop", (ev) => {
-        ev.preventDefault();
-        const itemEl = document.querySelector(
-          `.draggable[data-id="${draggedId}"]`
-        );
-        moveItemToPanel(draggedId, itemEl);
-      });
 
       /* ============================================================
                    FROCCS MAKER
@@ -1366,7 +2328,7 @@
 
       /* ============================================================
                    RETURN ITEM TO DRAGGABLE PANEL
-                ============================================================ */
+      ============================================================ */
 
       const draggablesPanel = document.getElementById("draggables");
 
@@ -1381,13 +2343,13 @@
         const el = document.querySelector(`.draggable[data-id="${draggedId}"]`);
         if (!el) return;
 
-        // Remove from dropzone visually
         draggablesPanel.appendChild(el);
-
-        // Remove on-board styling
         el.classList.remove("on-board");
+        playPop(); // ← ADD HERE
 
-        // Remove from bookkeeping
+        // --- NEW: unfolded when moved back to panel ---
+        applyUnfoldedVersion(el);
+
         const oldZone = placements[draggedId];
         if (oldZone) {
           zoneContents[oldZone] = zoneContents[oldZone].filter(
@@ -1396,8 +2358,9 @@
         }
         placements[draggedId] = null;
 
-        // Reset button
-        document.getElementById("next-btn").disabled = true;
+        if (LEVELS[currentLevel].id !== 6) {
+          document.getElementById("next-btn").disabled = !anyZoneHasItems();
+        }
       });
 
       /* -------------------------------------------------------------
@@ -1405,60 +2368,64 @@
                     ------------------------------------------------------------- */
 
       function showNarrative(nextLevelIndex) {
-        console.log("Showing narrative for level", nextLevelIndex);
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
 
-        textEl.textContent = NARRATIVE[nextLevelIndex] || "";
+        textEl.innerHTML = NARRATIVE[nextLevelIndex] || "";
         screen.classList.add("active");
 
-        // When player clicks Continue → load next level
         document.getElementById("narrative-btn").onclick = () => {
           screen.classList.remove("active");
-          loadLevel(nextLevelIndex);
+
+          // ⭐ After narrative → go to Menu instead of starting level
+          document.getElementById("menu-screen").classList.add("active");
+          buildMenu();
+
+          // ⭐ DO NOT load level here — wait for user to click it in the menu
         };
       }
 
       /* -------------------------------------------------------------
                        NEXT LEVEL
-                    ------------------------------------------------------------- */
+      ------------------------------------------------------------- */
 
       document.getElementById("next-btn").onclick = () => {
         const level = LEVELS[currentLevel];
 
-        // --- apply heritage points ---
+        // Award heritage points
         if (level.id === 4) {
           const glassState = getGlassState();
-
           if (glassState === "froccs") {
-            // ONLY FROCCS gives Hungarian heritage
             heritagePoints.hungarian += 7;
-          } else {
-            // wine-only, soda-only, empty → global
-            heritagePoints.russian += 0; // do nothing
           }
           updateBar();
         }
 
+        applyHeritagePointsForLevel(level);
         updateBar();
 
-        // --- advance level --
-        console.log(currentLevel);
+        // Advance level index
         currentLevel++;
 
-        // if game is over → finish
+        // Unlock next level
+        if (unlockedLevels < LEVELS.length) {
+          unlockedLevels = currentLevel + 1;
+        }
+
+        // If last level, finish
         if (currentLevel >= LEVELS.length) {
           finishGame();
           return;
         }
 
-        // --- show narrative (new behaviour) ---
-        showNarrative(currentLevel);
+        // ⭐ NO NARRATIVE HERE — just go back to menu
+        document.getElementById("menu-screen").classList.add("active");
+        buildMenu();
       };
 
       /* -------------------------------------------------------------
                        CLOSE ELEMENT_PANEL
-                    ------------------------------------------------------------- */
+      ------------------------------------------------------------- */
 
       const panel = document.getElementById("left-panel");
       const panelToggle = document.getElementById("panel-toggle");
@@ -1467,39 +2434,41 @@
         const closed = panel.classList.toggle("closed");
 
         if (closed) {
-          panelToggle.textContent = "⮞";
+          panelToggle.textContent = "☰";
         } else {
-          panelToggle.textContent = "⮜  Inventory";
+          panelToggle.textContent = "☰ Memories";
         }
       });
 
       /* -------------------------------------------------------------
                        END GAME
-                    ------------------------------------------------------------- */
+     ------------------------------------------------------------- */
 
       function finishGame() {
         document.getElementById("draggables").innerHTML = "";
         document.getElementById("dropzones").innerHTML = "";
         document.getElementById("next-btn").style.display = "none";
+        document.getElementById("left-panel").style.display = "none";
 
         const summary = document.getElementById("summary");
         summary.style.display = "block";
 
-        let html = `<h2>Your heritage mix</h2><ul>`;
-        const total = Object.values(heritagePoints).reduce((a, b) => a + b, 0);
+        // FIX: add total calculation
+        const total =
+          Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
+        let html = `<h2>Your heritage mix</h2><ul>`;
         HERITAGES.forEach((h) => {
           const pct = ((heritagePoints[h.key] / total) * 100).toFixed(1);
-          html += `<li>${h.label}: ${pct}%</li>`;
+          html += `<li style="--heritage-color:${h.color}">${h.label}: ${pct}%</li>`;
         });
-
         html += `</ul>`;
         summary.innerHTML = html;
       }
 
       /* -------------------------------------------------------------
                        START
-                    ------------------------------------------------------------- */
+     ------------------------------------------------------------- */
 
       document.getElementById("start-btn").onclick = () => {
         const start = document.getElementById("start-screen");
@@ -1507,7 +2476,6 @@
 
         // optional: book opening animation if you added it
         inner.classList.add("book-opening");
-
         setTimeout(() => {
           start.classList.add("hidden");
 
@@ -1516,6 +2484,7 @@
 
             // ✨ SHOW NARRATIVE 0 BEFORE MENU
             showPreMenuNarrative();
+            startMusic();
           }, 400);
         }, 900); // or 0 if no book animation
       };

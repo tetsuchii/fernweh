@@ -113,6 +113,29 @@
         z-index: -1;
       }
 
+      .restart-btn {
+        margin-top: 20px;
+        padding: 12px 30px !important;
+        font-size: 1rem;
+        border-radius: 999px !important;
+        background: #f6f1ed !important;
+        border: 2px solid rgba(120, 95, 80, 0.3) !important;
+        color: #6b5343 !important;
+        cursor: pointer;
+        box-shadow: 1px 2px 4px rgba(70, 55, 40, 0.15) !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+
+      .restart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 2px 3px 6px rgba(60, 45, 35, 0.25) !important;
+      }
+
+      .restart-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 1px 2px rgba(60, 45, 35, 0.15) !important;
+      }
+
       /* ---------------------------------------------------------
    NARRATIVE SCREEN BETWEEN LEVELS
 --------------------------------------------------------- */
@@ -1108,6 +1131,14 @@
       <source src="assets/shine.mp3" type="audio/mpeg" />
     </audio>
 
+    <audio id="click-sound" preload="auto">
+      <source src="assets/click.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="menu-click-sound" preload="auto">
+      <source src="assets/menu-click.mp3" type="audio/mpeg" />
+    </audio>
+
     <!-- Background Layers -->
     <div id="tree-bg"></div>
     <div id="paper-grain"></div>
@@ -1492,6 +1523,7 @@
           // UNLOCKED STATE
           else {
             thumb.onclick = () => {
+              playMenuClick(); // ⭐ NEW SOUND
               startLevelFromMenu(index);
             };
           }
@@ -1514,6 +1546,7 @@
 
         document.getElementById("narrative-btn").onclick = () => {
           screen.classList.remove("active");
+          playClick();
           loadLevel(levelIndex); // ⭐ Now it loads the level
         };
       }
@@ -1536,7 +1569,7 @@
 
         document.getElementById("narrative-btn").onclick = () => {
           preMenuIndex++;
-
+          playClick();
           // 👉 If more intros remain → show next intro
           if (preMenuIndex < PRE_MENU.length) {
             showPreMenuNarrative();
@@ -1571,9 +1604,23 @@
       }
 
       function playShine() {
+        if (isMuted) return;
         const shine = document.getElementById("shine-sound");
         shine.currentTime = 0;
         shine.play().catch(() => {});
+      }
+
+      function playClick() {
+        if (isMuted) return;
+        const click = document.getElementById("click-sound");
+        click.currentTime = 0;
+        click.play().catch(() => {});
+      }
+      function playMenuClick() {
+        if (isMuted) return;
+        const s = document.getElementById("menu-click-sound");
+        s.currentTime = 0;
+        s.play().catch(() => {});
       }
 
       // Toggle mute state
@@ -2287,7 +2334,7 @@
 
         document.getElementById("narrative-btn").onclick = () => {
           screen.classList.remove("active");
-
+          playClick();
           // ⭐ After narrative → go to Menu instead of starting level
           document.getElementById("menu-screen").classList.add("active");
           buildMenu();
@@ -2355,6 +2402,39 @@
                        END GAME
      ------------------------------------------------------------- */
 
+      function restartGame() {
+        // Reset points
+        heritagePoints = {
+          hungarian: 0,
+          szekely: 0,
+          italian: 0,
+          russian: 0,
+          svab: 0,
+          global: 0,
+        };
+
+        // Reset progress
+        currentLevel = 0;
+        unlockedLevels = 1;
+        placements = {};
+        zoneContents = {};
+        preMenuIndex = 0;
+
+        // Reset UI
+        document.getElementById("summary").style.display = "none";
+
+        // Reset bar
+        initBar();
+
+        // Show start screen again OR go straight to menu
+        // ★ Option A: show intro narrative again
+        // showPreMenuNarrative();
+
+        // ★ Option B: skip intro, go straight to menu
+        buildMenu();
+        document.getElementById("menu-screen").classList.add("active");
+      }
+
       function finishGame() {
         document.getElementById("draggables").innerHTML = "";
         document.getElementById("dropzones").innerHTML = "";
@@ -2374,7 +2454,18 @@
           html += `<li style="--heritage-color:${h.color}">${h.label}: ${pct}%</li>`;
         });
         html += `</ul>`;
-        summary.innerHTML = html;
+        summary.innerHTML =
+          html +
+          `
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="restart-btn" class="restart-btn">Start Again</button>
+  </div>
+`;
+        // Attach restart functionality
+        document.getElementById("restart-btn").onclick = () => {
+          playClick(); // optional sound effect (reuses your menu click)
+          restartGame();
+        };
       }
 
       /* -------------------------------------------------------------
@@ -2385,6 +2476,7 @@
         const start = document.getElementById("start-screen");
         const inner = document.getElementById("start-inner");
 
+        playClick();
         // optional: book opening animation if you added it
         inner.classList.add("book-opening");
         setTimeout(() => {

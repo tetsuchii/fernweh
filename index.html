@@ -594,7 +594,7 @@
       }
 
       .level3-zone {
-        width: 380px !important;
+        width: 1000px !important;
         height: 20px !important;
         background: rgba(255, 255, 255, 0.15);
         border-radius: 12px;
@@ -1065,6 +1065,75 @@
         display: inline-block !important;
         padding: 12px 36px !important; /* use your preferred padding */
       }
+
+      #narrative-buttons button {
+        min-width: 160px; /* adjust to taste */
+        text-align: center;
+      }
+
+      #narrative-back {
+        padding: 12px 24px !important;
+        opacity: 0.8;
+      }
+
+      #narrative-back:hover {
+        opacity: 1;
+      }
+
+      #info-popup {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 20, 20, 0.55);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 100000;
+      }
+
+      #info-popup.active {
+        display: flex;
+      }
+
+      #info-inner {
+        width: 480px;
+        max-width: 90%;
+        background: linear-gradient(135deg, #fdf9f4, #faf6f1);
+        padding: 40px;
+        border-radius: 22px;
+        border: 2px solid rgba(140, 110, 90, 0.25);
+
+        color: #6b5445;
+        text-align: center;
+      }
+
+      #info-inner h2 {
+        font-family: "Playwrite CZ", cursive;
+        font-size: 2rem;
+        margin-bottom: 16px;
+        color: #8a6a52;
+      }
+
+      #info-inner ul {
+        list-style: none;
+        padding: 0;
+        margin: 16px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #info-inner li {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.95rem;
+      }
+
+      #info-close {
+        margin-top: 20px;
+        padding: 10px 26px !important;
+      }
     </style>
   </head>
   <body>
@@ -1087,7 +1156,10 @@
           <p id="narrative-text"></p>
         </div>
 
-        <button id="narrative-btn">Continue</button>
+        <div id="narrative-buttons" style="display: flex; gap: 10px">
+          <button id="narrative-back">Back</button>
+          <button id="narrative-next">Continue</button>
+        </div>
       </div>
     </div>
 
@@ -1117,6 +1189,27 @@
       "
     >
       🔊
+    </button>
+
+    <button
+      id="info-btn"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 120px; /* sits left of mute */
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        border: 2px solid rgba(120, 95, 80, 0.4);
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      ?
     </button>
 
     <audio id="bg-music" loop preload="auto">
@@ -1174,6 +1267,32 @@
 
         <div id="heritage-legend"></div>
       </footer>
+    </div>
+
+    <div id="info-popup">
+      <div id="info-inner">
+        <h2>How to Play</h2>
+
+        <p>
+          Each scene in <strong>Born of Many Places</strong> represents a
+          memory.
+        </p>
+        <p>
+          Drag the objects from the left panel onto the scene where you feel
+          they belong.
+        </p>
+
+        <ul>
+          <li>Each object carries a cultural heritage.</li>
+          <li>Placing objects increases heritage points.</li>
+          <li>Some scenes have special rules (Feel free to experiment!).</li>
+          <li>There isn't a correct answer.</li>
+          <li>After finishing a scene, press <strong>Lock In</strong>.</li>
+          <li>Your heritage bar at the bottom shows your blend.</li>
+        </ul>
+
+        <button id="info-close">Close</button>
+      </div>
     </div>
 
     <!-- Dropzones Layer -->
@@ -1285,10 +1404,7 @@
               heritage: "russian",
             },
           ],
-          dropzones: [
-            { id: "dzBetlehem", x: 30, y: 62 },
-            { id: "dzDedmoroz", x: 80, y: 62 },
-          ],
+          dropzones: [{ id: "dzBetlehem", x: 54, y: 62 }],
         },
 
         /* ============================
@@ -1369,10 +1485,18 @@
               image: "assets/spegetti.png",
               heritage: "italian",
             },
-            { id: "porkolt", image: "assets/porkolt.png", heritage: "hungarian" },
+            {
+              id: "porkolt",
+              image: "assets/porkolt.png",
+              heritage: "hungarian",
+            },
 
             { id: "vineta", image: "assets/vineta.png", heritage: "szekely" },
-            { id: "gozgomboc", image: "assets/gozgomboc.png", heritage: "svab" },
+            {
+              id: "gozgomboc",
+              image: "assets/gozgomboc.png",
+              heritage: "svab",
+            },
             {
               id: "pelmeni",
               image: "assets/pelmeni.png",
@@ -1479,27 +1603,48 @@
       }
 
       function updateBar() {
-        console.log("heritagePoints:", heritagePoints);
+        const bar = document.getElementById("heritage-bar");
+        const legend = document.getElementById("heritage-legend");
+
         const total =
           Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
-        HERITAGES.forEach((h) => {
-          const seg = document.querySelector(
-            `.heritage-segment[data-key="${h.key}"]`
-          );
-          if (!seg) return;
+        // Filter heritage entries that actually have points
+        const activeHeritages = HERITAGES.map((h) => ({
+          ...h,
+          value: heritagePoints[h.key],
+          pct: (heritagePoints[h.key] / total) * 100,
+        })).filter((h) => h.value > 0);
 
-          const pct = (heritagePoints[h.key] / total) * 100;
-          seg.style.width = pct + "%";
+        // OPTIONAL: sort visually by percentage (largest → smallest)
+        activeHeritages.sort((a, b) => b.pct - a.pct);
 
-          // Do NOT show label if:
-          // - it's 100%
-          // - or it's the only segment with points
-          const isOnlySegmentWithPoints =
-            pct === 100 &&
-            Object.values(heritagePoints).filter((v) => v > 0).length === 1;
+        // Clear existing bar + legend
+        bar.innerHTML = "";
+        legend.innerHTML = "";
 
-          seg.textContent = "";
+        // Build updated segments + legend entries
+        activeHeritages.forEach((h) => {
+          const seg = document.createElement("div");
+          seg.className = "heritage-segment";
+          seg.dataset.key = h.key;
+
+          // color (except global which uses pattern)
+          if (h.key !== "global") {
+            seg.style.background = h.color;
+          }
+
+          seg.style.width = h.pct + "%";
+          bar.appendChild(seg);
+
+          // Legend pill
+          const item = document.createElement("div");
+          item.className = "heritage-legend-item";
+          item.innerHTML = `
+      <div class="heritage-color-box" style="background:${h.color}"></div>
+      ${h.label}
+    `;
+          legend.appendChild(item);
         });
       }
 
@@ -1542,14 +1687,28 @@
       function showLevelIntro(levelIndex) {
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
+        const nextBtn = document.getElementById("narrative-next");
+        const backBtn = document.getElementById("narrative-back");
 
         textEl.innerHTML = NARRATIVE[levelIndex] || "";
         screen.classList.add("active");
 
-        document.getElementById("narrative-btn").onclick = () => {
-          screen.classList.remove("active");
+        // For level intros, BACK goes to menu
+        backBtn.style.display = "inline-block";
+        backBtn.onclick = () => {
           playClick();
-          loadLevel(levelIndex); // ⭐ Now it loads the level
+          screen.classList.remove("active");
+          showMenu();
+        };
+
+        // Change last level’s intro button to "Yes"
+        nextBtn.textContent =
+          levelIndex === LEVELS.length - 1 ? "Yes" : "Continue";
+
+        nextBtn.onclick = () => {
+          playClick();
+          screen.classList.remove("active");
+          loadLevel(levelIndex);
         };
       }
 
@@ -1564,20 +1723,33 @@
       function showPreMenuNarrative() {
         const screen = document.getElementById("narrative-screen");
         const textEl = document.getElementById("narrative-text");
+        const nextBtn = document.getElementById("narrative-next");
+        const backBtn = document.getElementById("narrative-back");
 
-        // Show current intro text
         textEl.innerHTML = PRE_MENU[preMenuIndex];
         screen.classList.add("active");
 
-        document.getElementById("narrative-btn").onclick = () => {
-          preMenuIndex++;
-          playClick();
-          // 👉 If more intros remain → show next intro
-          if (preMenuIndex < PRE_MENU.length) {
+        // BACK BUTTON
+        backBtn.style.display = preMenuIndex === 0 ? "none" : "inline-block";
+
+        backBtn.onclick = () => {
+          if (preMenuIndex > 0) {
+            preMenuIndex--;
+            playClick();
             showPreMenuNarrative();
           }
-          // 👉 If finished → go to menu
-          else {
+        };
+
+        // NEXT BUTTON
+        nextBtn.textContent =
+          preMenuIndex === PRE_MENU.length - 1 ? "Yes" : "Continue";
+
+        nextBtn.onclick = () => {
+          playClick();
+          preMenuIndex++;
+          if (preMenuIndex < PRE_MENU.length) {
+            showPreMenuNarrative();
+          } else {
             screen.classList.remove("active");
             showMenu();
           }
@@ -2450,12 +2622,24 @@
         const total =
           Object.values(heritagePoints).reduce((a, b) => a + b, 0) || 1;
 
+        // Create sorted heritage list
+        const sortedHeritages = HERITAGES.map((h) => ({
+          ...h,
+          pct: (heritagePoints[h.key] / total) * 100 || 0,
+        })).sort((a, b) => b.pct - a.pct); // biggest first
+
         let html = `<h2>Your heritage mix</h2><ul>`;
-        HERITAGES.forEach((h) => {
-          const pct = ((heritagePoints[h.key] / total) * 100).toFixed(1);
-          html += `<li style="--heritage-color:${h.color}">${h.label}: ${pct}%</li>`;
+
+        // Build list in sorted order
+        sortedHeritages.forEach((h) => {
+          html += `
+    <li style="--heritage-color:${h.color}">
+      ${h.label}: ${h.pct.toFixed(1)}%
+    </li>`;
         });
+
         html += `</ul>`;
+
         summary.innerHTML =
           html +
           `
@@ -2466,13 +2650,27 @@
         // Attach restart functionality
         document.getElementById("restart-btn").onclick = () => {
           playClick(); // optional sound effect (reuses your menu click)
-          restartGame();
+          location.reload(); // 🔄 refreshes the whole page
         };
       }
 
       /* -------------------------------------------------------------
                        START
      ------------------------------------------------------------- */
+
+      const infoBtn = document.getElementById("info-btn");
+      const infoPopup = document.getElementById("info-popup");
+      const infoClose = document.getElementById("info-close");
+
+      infoBtn.addEventListener("click", () => {
+        infoPopup.classList.add("active");
+        playClick();
+      });
+
+      infoClose.addEventListener("click", () => {
+        infoPopup.classList.remove("active");
+        playClick();
+      });
 
       document.getElementById("start-btn").onclick = () => {
         const start = document.getElementById("start-screen");
